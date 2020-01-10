@@ -1,76 +1,94 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.I2C;
+//First Wpilib 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.Joystick;
-
+import edu.wpi.first.wpilibj.Solenoid;
+//Color Sensor
+import edu.wpi.first.wpilibj.I2C;
+//CTRE
+import com.ctre.phoenix.motorcontrol.can.VictorSPX; 
+  //import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+//Rev Robotics
 import com.revrobotics.ColorSensorV3;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
 
 public class Robot extends TimedRobot {
+  private Solenoid shifter;
   private Joystick player1;
+  
+  //Drive Talons
+  // private CANSparkMax leftMaster;
+  // private CANSparkMax leftSlave1;
+  // private CANSparkMax rightMaster;
+  // private CANSparkMax rightSlave1;
+  //Color Wheel Talon
+  private VictorSPX wheeltalon;
+
   private double throttleAxis;
   private double arcadeSteerAxis;
   private double leftMotorSpeed;
   private double rightMotorSpeed;
-  private TalonSRX leftMaster;
-  private TalonSRX leftSlave1;
-  private TalonSRX leftSlave2;
-  private TalonSRX rightMaster;
-  private TalonSRX rightSlave1;
-  private TalonSRX rightSlave2;
-  
+
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
+  private ColorWheel colorwheel;
+
   public Robot() {
+    shifter = new Solenoid(0);
     player1 = new Joystick(0);
-    leftMaster = new TalonSRX(1);
-    leftSlave1 = new TalonSRX(2);
-    leftSlave2 = new TalonSRX(3);
-    rightMaster = new TalonSRX(4);
-    rightSlave1 = new TalonSRX(5);
-    rightSlave2 = new TalonSRX(6);
-
-    leftSlave1.follow(leftMaster);
-    leftSlave2.follow(leftMaster);
-    leftSlave1.setInverted(true);
-    leftSlave2.setInverted(true);
-
-    rightSlave1.follow(rightMaster);
-    rightSlave2.follow(rightMaster);
-    rightSlave1.setInverted(true);
-    rightSlave2.setInverted(true);
+    // leftMaster = new CANSparkMax(3,MotorType.kBrushless);
+    // leftSlave1 = new CANSparkMax(4,MotorType.kBrushless);
+    // rightMaster = new CANSparkMax(5,MotorType.kBrushless);
+    // rightSlave1 = new CANSparkMax(6,MotorType.kBrushless);
+    wheeltalon = new VictorSPX(0);
+    
+    //--  Color Sensor Code  --//
+    colorwheel = new ColorWheel(wheeltalon, m_colorSensor, player1);
+    // leftSlave1.follow(leftMaster);
+    // rightSlave1.follow(rightMaster);
   }
+  
   @Override
-  public void robotInit() {
-
-  }
+  public void robotInit() { }
+  
   @Override
-  public void robotPeriodic() {
-  }
+  public void robotPeriodic() { }
 
   @Override
-  public void autonomousInit() {
-
-  }
+  public void autonomousInit() { }
 
   @Override
-  public void autonomousPeriodic() {
+  public void autonomousPeriodic() { }
 
+  @Override
+  public void teleopInit() {
+    //1 is blue
+    //2 is green
+    //3 is red
+    //4 is yellow
+    colorwheel.setColor(3);
+
+    super.teleopInit();
   }
 
   @Override
   public void teleopPeriodic() {
+    
+    //--  Drive Code  --//
+    if(player1.getRawButton(5)) {
+      shifter.set(true);
+    } else {
+      shifter.set(false);
+    }
+
     throttleAxis = player1.getRawAxis(1);
-    arcadeSteerAxis = player1.getRawAxis(0);
+    arcadeSteerAxis = -player1.getRawAxis(0);
 
     throttleAxis = Math.pow(throttleAxis, 3);
-    arcadeSteerAxis = Math.pow(arcadeSteerAxis, 3);
+    arcadeSteerAxis = Math.pow(arcadeSteerAxis, 5);
     if (throttleAxis > 0.0D) {
       if (arcadeSteerAxis > 0.0D) {
           leftMotorSpeed = throttleAxis - arcadeSteerAxis;
@@ -88,64 +106,29 @@ public class Robot extends TimedRobot {
           rightMotorSpeed = -Math.max(-throttleAxis, -arcadeSteerAxis);
       }
     }
-    leftMaster.set(ControlMode.PercentOutput, leftMotorSpeed);
-    rightMaster.set(ControlMode.PercentOutput, rightMotorSpeed);
+    // leftMaster.set(leftMotorSpeed);
+    // rightMaster.set(-rightMotorSpeed);
 
-    //Color Sensor Code
-    
-    Color detectedColor = m_colorSensor.getColor();
-
-    //double IR = m_colorSensor.getIR();
-    
-    // Cyan Green Red Yellow
-    //R 0.132 0.173 0.500 0.315
-    //G 0.426 0.563 0.352 0.554
-    //B 0.441 0.263 0.147 0.132
-    
-    String ColorDetected = "None";
-    // double Rmax = 0.0;
-    // double Gmax = 0.0;
-    // double Bmax = 0.0;
-    // if(Rmax < detectedColor.red) {
-    //   Rmax = detectedColor.red;
-    // }
-    // if(Gmax < detectedColor.green) {
-    //   Gmax = detectedColor.green;
-    // }
-    // if(Bmax < detectedColor.blue) {
-    //   Bmax = detectedColor.blue;
-    // }
-
-    SmartDashboard.putNumber("Red", detectedColor.red);
-    //SmartDashboard.putNumber("Red Max", Rmax);
-    SmartDashboard.putNumber("Green", detectedColor.green);
-    //SmartDashboard.putNumber("Green Max", Gmax);
-    SmartDashboard.putNumber("Blue", detectedColor.blue);
-    //SmartDashboard.putNumber("Blue Max", Bmax);
-    
-    if(detectedColor.red > detectedColor.blue && detectedColor.red > detectedColor.green && detectedColor.red > 0.4){
-      ColorDetected = "Red";
-    } else if(Math.abs(detectedColor.red-detectedColor.green) < 0.25) {
-      ColorDetected = "Yellow";
-    } else if(Math.abs(detectedColor.green-detectedColor.blue) < 0.25) {
-      ColorDetected = "Blue";
-    } else if(detectedColor.green > detectedColor.blue && detectedColor.green > detectedColor.red) {
-      ColorDetected = "Green"; 
-    } else {
-      ColorDetected = "Invalid";
-    }
-    int proximity = m_colorSensor.getProximity();
-    if(proximity<50) {
-      ColorDetected = "Out Of Range";
-    }
-    SmartDashboard.putString("Color Detected", ColorDetected);
-    
-    //SmartDashboard.putNumber("IR", IR);
-    
-    //SmartDashboard.putNumber("Proximity", proximity);
+    colorwheel.Main();
   }
 
   @Override
-  public void testPeriodic() {
+  public void testPeriodic() { }
+
+  //Fetch Buttons
+  public boolean getButtonA(){
+		return player1.getRawButton(1);
+	}
+
+	public boolean getButtonB(){
+		return player1.getRawButton(2);
+	}
+
+	public boolean getButtonX(){
+		return player1.getRawButton(3);
+	}
+
+	public boolean getButtonY(){
+		return player1.getRawButton(4);
   }
 }
