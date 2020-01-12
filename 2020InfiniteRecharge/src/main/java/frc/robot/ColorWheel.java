@@ -1,18 +1,24 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.util.Color;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.ColorSensorV3;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 
+import java.lang.Thread.State;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ColorWheel {
+    private int MatchColorNumber;
     private String MatchColor;
     private VictorSPX wheeltalon;
     private ColorSensorV3 m_colorSensor;
     private Joystick player1;
+
+    private int DetectedColorInt;
+
     public ColorWheel(VictorSPX wheeltalon, ColorSensorV3 m_colorSensor, Joystick player1) {
         this.player1 = player1;
         this.wheeltalon = wheeltalon;
@@ -29,6 +35,7 @@ public class ColorWheel {
         } else {
             MatchColor = "Yellow";
         }
+        MatchColorNumber = Color;
     }
 
     public void Main(){
@@ -38,12 +45,16 @@ public class ColorWheel {
     
         if(ColorInput.red > ColorInput.blue && ColorInput.red > ColorInput.green && ColorInput.red > 0.4){
             ColorDetected = "Red";
+            DetectedColorInt = 2;
         } else if(Math.abs(ColorInput.red-ColorInput.green) < 0.25) {
             ColorDetected = "Yellow";
+            DetectedColorInt = 1;
         } else if(Math.abs(ColorInput.green-ColorInput.blue) < 0.25) {
             ColorDetected = "Blue";
+            DetectedColorInt = 4;
         } else if(ColorInput.green > ColorInput.blue && ColorInput.green > ColorInput.red) {
-            ColorDetected = "Green"; 
+            ColorDetected = "Green";
+            DetectedColorInt = 3; 
         } else {
             ColorDetected = "Invalid";
         }
@@ -57,12 +68,38 @@ public class ColorWheel {
         SmartDashboard.putString("Color Detected", ColorDetected);
         //SmartDashboard.putNumber("Proximity", proximity);
    
-        double output = 0.2;
         //A = 1, B = 2, X = 3, Y = 4
-        if(!ColorDetected.equals(MatchColor) && player1.getRawButton(1)) {
-            wheeltalon.set(ControlMode.PercentOutput, -output);
-        } else {
-            wheeltalon.set(ControlMode.PercentOutput, 0);
+        if(player1.getRawButton(1)) {
+            StateMachE = StateMachine.GO1LEFT;
+            // if(ColorDetected.equals(MatchColor)) {
+            //     StateMachE = StateMachine.ONCOLOUR;
+            // } else if(DetectedColorInt == MatchColorNumber-1 || (MatchColorNumber-1==0 && DetectedColorInt == 4)) {
+            //     StateMachE = StateMachine.GO1LEFT;
+            // } else if(DetectedColorInt == MatchColorNumber+1 || (MatchColorNumber+1==4 && DetectedColorInt == 1)) {
+            //     StateMachE = StateMachine.GO1RIGHT;
+            // } else if(DetectedColorInt == MatchColorNumber+2 || (MatchColorNumber+2==4 && DetectedColorInt == 1) || (MatchColorNumber+2==5 && DetectedColorInt == 2)) {
+            //     StateMachE = StateMachine.GO2RIGHT;
+            // }
         }
+    }
+    
+    StateMachine StateMachE = StateMachine.ONCOLOUR;
+
+    public static enum StateMachine {
+        ONCOLOUR, GO1LEFT, GO1RIGHT, GO2RIGHT;
+        private StateMachine() {}
+    }
+
+    public void StateMachine() {
+        switch(StateMachE) {
+        case ONCOLOUR:
+            wheeltalon.set(ControlMode.PercentOutput, 0);
+        case GO1LEFT:
+            wheeltalon.set(ControlMode.PercentOutput, 0.25);
+        case GO1RIGHT:
+            wheeltalon.set(ControlMode.PercentOutput, -0.25);
+        case GO2RIGHT:
+            wheeltalon.set(ControlMode.PercentOutput, -0.5);
+        } 
     }
 }
