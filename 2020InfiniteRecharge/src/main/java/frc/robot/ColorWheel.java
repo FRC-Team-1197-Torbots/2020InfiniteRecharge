@@ -19,6 +19,9 @@ public class ColorWheel {
 
     private int DetectedColorInt;
 
+    //Enum for State
+    StateMachine StateMachE = StateMachine.ONCOLOUR;
+
     public ColorWheel(VictorSPX wheeltalon, ColorSensorV3 m_colorSensor, Joystick player1) {
         this.player1 = player1;
         this.wheeltalon = wheeltalon;
@@ -83,7 +86,6 @@ public class ColorWheel {
         }
     }
     
-    StateMachine StateMachE = StateMachine.ONCOLOUR;
 
     public static enum StateMachine {
         ONCOLOUR, GO1LEFT, GO1RIGHT, GO2RIGHT;
@@ -92,14 +94,18 @@ public class ColorWheel {
 
     public void StateMachine() {
         switch(StateMachE) {
-        case ONCOLOUR:
-            wheeltalon.set(ControlMode.PercentOutput, 0);
-        case GO1LEFT:
-            wheeltalon.set(ControlMode.PercentOutput, 0.25);
-        case GO1RIGHT:
-            wheeltalon.set(ControlMode.PercentOutput, -0.25);
-        case GO2RIGHT:
-            wheeltalon.set(ControlMode.PercentOutput, -0.5);
+            case ONCOLOUR:
+                wheeltalon.set(ControlMode.PercentOutput, 0);
+                break;
+            case GO1LEFT:
+                wheeltalon.set(ControlMode.PercentOutput, 0.25);
+                break;
+            case GO1RIGHT:
+                wheeltalon.set(ControlMode.PercentOutput, -0.25);
+                break;
+            case GO2RIGHT:
+                wheeltalon.set(ControlMode.PercentOutput, -0.5);
+                break;
         } 
     }
 }
