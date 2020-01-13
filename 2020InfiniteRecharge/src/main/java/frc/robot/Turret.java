@@ -26,6 +26,7 @@ public class Turret {
     private final double hozkI = 0;
     private final double hozkD = 0;
     private TorDerivative horizontalDerivative;
+    private TorDerivative hoodDerivative;
     private double horizontalVelocity;
     private double horizontalIntegral = 0;
     //PID for the hood angle adjustment
@@ -35,6 +36,9 @@ public class Turret {
     private final double hoodGearRatio = 500;//from the encoder to the movement fo the hood
     private double currentHoodAngle;
     private double currentHoodError;
+    private double hoodVelocity;
+    private double hoodIntegral = 0; 
+
 
     private final double height1 = 31;
     private final double height2 = 94.5;
@@ -90,6 +94,23 @@ public class Turret {
             (360 * (hoodMotor.getSelectedSensorPosition(0) / (4096 * hoodGearRatio)));
         currentHoodError = hoodAngleToSet - currentHoodAngle;
         //everything goes off of current hood error
+        hoodVelocity = hoodDerivative.estimate(hoodAngleToSet);
+        hoodIntegral += currentHoodError * dt;
+        if(currentHoodError < 0.25) {
+            hoodIntegral = 0;
+        }
+        if(hoodIntegral * hoodkI > 0.5) {
+            hoodIntegral = 0.5 / hoodkI;
+        } else if(hoodIntegral * hoodkI < -0.5) {
+            hoodIntegral = -0.5 / hoodkI;
+        }
+        return ((currentHoodError * hoodkP) + 
+            (hoodVelocity * hoodkD) + 
+            (hoodIntegral * hoodkI));
+        }
+            
+    }
+}
 
         return 1;
     }
