@@ -10,7 +10,6 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-
 public class ColorWheel {
     private int MatchColorNumber;
     private String MatchColor;
