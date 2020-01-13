@@ -3,7 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.util.Color;
 import com.revrobotics.ColorSensorV3;
 
-import java.lang.Thread.State;
+//import java.lang.Thread.State;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -74,19 +74,19 @@ public class ColorWheel {
    
         //A = 1, B = 2, X = 3, Y = 4
         if(player1.getRawButton(1)) {
+            System.out.print("l");
             StateMachE = StateMachine.GO1LEFT;
-            // if(ColorDetected.equals(MatchColor)) {
-            //     StateMachE = StateMachine.ONCOLOUR;
-            // } else if(DetectedColorInt == MatchColorNumber-1 || (MatchColorNumber-1==0 && DetectedColorInt == 4)) {
-            //     StateMachE = StateMachine.GO1LEFT;
-            // } else if(DetectedColorInt == MatchColorNumber+1 || (MatchColorNumber+1==4 && DetectedColorInt == 1)) {
-            //     StateMachE = StateMachine.GO1RIGHT;
-            // } else if(DetectedColorInt == MatchColorNumber+2 || (MatchColorNumber+2==4 && DetectedColorInt == 1) || (MatchColorNumber+2==5 && DetectedColorInt == 2)) {
-            //     StateMachE = StateMachine.GO2RIGHT;
-            // }
+            if(ColorDetected.equals(MatchColor)) {
+                StateMachE = StateMachine.ONCOLOUR;
+            } else if(DetectedColorInt == MatchColorNumber-1 || (MatchColorNumber-1==0 && DetectedColorInt == 4)) {
+                StateMachE = StateMachine.GO1LEFT;
+            } else if(DetectedColorInt == MatchColorNumber+1 || (MatchColorNumber+1==4 && DetectedColorInt == 1)) {
+                StateMachE = StateMachine.GO1RIGHT;
+            } else if(DetectedColorInt == MatchColorNumber+2 || (MatchColorNumber+2==4 && DetectedColorInt == 1) || (MatchColorNumber+2==5 && DetectedColorInt == 2)) {
+                StateMachE = StateMachine.GO2RIGHT;
+            }
         }
     }
-    
 
     public static enum StateMachine {
         ONCOLOUR, GO1LEFT, GO1RIGHT, GO2RIGHT;
