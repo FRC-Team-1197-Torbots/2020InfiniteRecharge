@@ -84,6 +84,7 @@ public class ColorWheel {
                 StateMachE = StateMachine.GO2RIGHT;
             }
         }
+        StateMachine();
     }
 
     public static enum StateMachine {
