@@ -16,7 +16,6 @@ public class ColorWheel {
     private VictorSPX wheeltalon;
     private ColorSensorV3 m_colorSensor;
     private Joystick player1;
-
     private int DetectedColorInt;
 
     //Enum for State
