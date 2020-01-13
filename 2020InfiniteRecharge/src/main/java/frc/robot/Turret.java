@@ -108,8 +108,7 @@ public class Turret {
             (hoodVelocity * hoodkD) + 
             (hoodIntegral * hoodkI));
         }
-            
-        
+
     }
 }
 
