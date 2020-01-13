@@ -110,10 +110,6 @@ public class Turret {
         }
 
     }
-}
-
-        return 1;
-    }
 
     public double hozPID(double currentAngle) {
         horizontalVelocity = horizontalDerivative.estimate(currentAngle);
