@@ -2,15 +2,18 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.util.Color;
 import com.revrobotics.ColorSensorV3;
-
-//import java.lang.Thread.State;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ColorWheel {
+
+    public String CurrentColor;
+    private boolean hasBeenSpun = false;
+    private int TimesSpun = 0;
+    private int Sample = 0;
+
     private int MatchColorNumber;
     private String MatchColor;
     private VictorSPX wheeltalon;
@@ -41,10 +44,17 @@ public class ColorWheel {
     }
 
     public void Main(){
+        if(Sample == 30) {
+            Sample = 0;
+        } else {
+            Sample++;
+        }
+        
         Color ColorInput = m_colorSensor.getColor();
         int ProximityInput = m_colorSensor.getProximity();
         String ColorDetected = "None";
-    
+        
+        //Color Detection Algorithm
         if(ColorInput.red > ColorInput.blue && ColorInput.red > ColorInput.green && ColorInput.red > 0.4){
             ColorDetected = "Red";
             DetectedColorInt = 2;
@@ -64,12 +74,7 @@ public class ColorWheel {
             ColorDetected = "Out Of Range";
         }
 
-        SmartDashboard.putNumber("Red", ColorInput.red);
-        SmartDashboard.putNumber("Green", ColorInput.green);
-        SmartDashboard.putNumber("Blue", ColorInput.blue);
-        SmartDashboard.putString("Color Detected", ColorDetected);
-        //SmartDashboard.putNumber("Proximity", proximity);
-   
+        //Button Detection and State Machine
         //A = 1, B = 2, X = 3, Y = 4
         if(player1.getRawButton(1)) {
             System.out.print("l");
@@ -84,10 +89,33 @@ public class ColorWheel {
                 StateMachE = StateMachine.GO2RIGHT;
             }
         }
-        StateMachine();
+
+        if(player1.getRawButton(2) && hasBeenSpun == false) {
+            CurrentColor = ColorDetected;
+            hasBeenSpun = true;
+            wheeltalon.set(ControlMode.PercentOutput, 0.5);
+        } else if(TimesSpun == 4) {
+            wheeltalon.set(ControlMode.PercentOutput, 0);
+        } else if (hasBeenSpun == true) {
+            if(Sample == 1 && ColorDetected.equals(CurrentColor)) {
+                TimesSpun++;
+            }
+        } else {
+            StateMachine();
+        }
+        
+        //Display Data on Smart Dashboard
+        SmartDashboard.putNumber("Red", ColorInput.red);
+        SmartDashboard.putNumber("Green", ColorInput.green);
+        SmartDashboard.putNumber("Blue", ColorInput.blue);
+        SmartDashboard.putString("Color Detected", ColorDetected);
+        SmartDashboard.putNumber("Sample", Sample);
+        SmartDashboard.putNumber("Times Supn:", TimesSpun);
+        SmartDashboard.putString("Color", MatchColor)
+        //SmartDashboard.putNumber("Proximity", proximity);
     }
 
-    public static enum StateMachine {
+    public static enum StateMachine {   
         ONCOLOUR, GO1LEFT, GO1RIGHT, GO2RIGHT;
         private StateMachine() {}
     }
@@ -105,7 +133,7 @@ public class ColorWheel {
                 break;
             case GO2RIGHT:
                 wheeltalon.set(ControlMode.PercentOutput, -0.5);
-                break;
+                break;    
         } 
     }
 }

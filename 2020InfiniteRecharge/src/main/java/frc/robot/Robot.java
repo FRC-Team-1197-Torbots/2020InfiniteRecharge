@@ -1,6 +1,7 @@
 package frc.robot;
 
 //First Wpilib 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -109,6 +110,31 @@ public class Robot extends TimedRobot {
     // leftMaster.set(leftMotorSpeed);
     // rightMaster.set(-rightMotorSpeed);
 
+    String gameData;
+    gameData = DriverStation.getInstance().getGameSpecificMessage();
+    if(gameData.length() > 0)
+    {
+      switch (gameData.charAt(0))
+      {
+        case 'B' :
+          colorwheel.setColor(1);
+          break;
+        case 'G' :
+          colorwheel.setColor(2);
+          break;
+        case 'R' :
+          colorwheel.setColor(3);
+          break;
+        case 'Y' :
+          colorwheel.setColor(4);
+          break;
+        default :
+          //This is corrupt data
+          break;
+      }
+    } else {
+      //Code for no data received yet
+    }
     colorwheel.Main();
   }
 
