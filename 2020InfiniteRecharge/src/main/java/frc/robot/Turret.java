@@ -3,11 +3,12 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class Turret {
     private final double dt = 0.005;
@@ -21,15 +22,19 @@ public class Turret {
     private double x;
     private double y;
 
-    //PID for the horizontal spinner of the turret
-    private final double hozkP = 0.03;
-    private final double hozkI = 0;
-    private final double hozkD = 0;
+    //--  PID for the horizontal spinner of the turret  --//
     private TorDerivative horizontalDerivative;
-    private TorDerivative hoodDerivative;
+    private final double horizkP = 0.03;
+    private final double horizkI = 0;
+    private final double horizkD = 0;
+        //Gear Ratio
+        //Angle
+        //Error
     private double horizontalVelocity;
     private double horizontalIntegral = 0;
-    //PID for the hood angle adjustment
+    
+    //--  PID for the hood angle adjustment  --//
+    private TorDerivative hoodDerivative;
     private final double hoodkP = 0;
     private final double hoodkI = 0;
     private final double hoodkD = 0;
@@ -38,7 +43,6 @@ public class Turret {
     private double currentHoodError;
     private double hoodVelocity;
     private double hoodIntegral = 0; 
-
 
     private final double height1 = 31;
     private final double height2 = 94.5;
@@ -60,7 +64,6 @@ public class Turret {
 
         hoodMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
         hoodMotor.setSelectedSensorPosition(0, 0, 0);
-
         horizontalDerivative = new TorDerivative(dt);
         horizontalDerivative.resetValue(0);
     }
@@ -68,11 +71,12 @@ public class Turret {
     public void run(boolean run) {//gets angle of the hood
         x = tx.getDouble(0.0);
         SmartDashboard.putNumber("X:",x);
-        horizontalSpeedToSet = hozPID(x);
+        horizontalSpeedToSet = horizPID(x);
+        hoodSpeedToSet = hoodPID(x);
         if(run) {
             turretMotor.set(ControlMode.PercentOutput, horizontalSpeedToSet);
+            hoodMotor.set(ControlMode.PercentOutput, hoodSpeedToSet);
         }
-
 
         y = ty.getDouble(0.0);
         SmartDashboard.putNumber("Y:",y);
@@ -84,9 +88,7 @@ public class Turret {
         hoodAngleToSet *= 180 / (Math.PI);//hood angle is now degrees
 
         SmartDashboard.putNumber("Intermediate Calculation" , intermediateCalculation);
-        SmartDashboard.putNumber("Hood Angle" , hoodAngleToSet);   
-        
-        
+        SmartDashboard.putNumber("Hood Angle" , hoodAngleToSet);           
     }
 
     public double hoodPID(double hoodAngleToSet) {
@@ -107,23 +109,21 @@ public class Turret {
         return ((currentHoodError * hoodkP) + 
             (hoodVelocity * hoodkD) + 
             (hoodIntegral * hoodkI));
-        }
-
     }
 
-    public double hozPID(double currentAngle) {
+    public double horizPID(double currentAngle) {
         horizontalVelocity = horizontalDerivative.estimate(currentAngle);
         horizontalIntegral += currentAngle * dt;
         if(currentAngle < 0.25) {
             horizontalIntegral = 0;
         }
-        if(horizontalIntegral * hozkI > 0.5) {
-            horizontalIntegral = 0.5 / hozkI;
-        } else if(horizontalIntegral * hozkI < -0.5) {
-            horizontalIntegral = -0.5 / hozkI;
+        if(horizontalIntegral * horizkI > 0.5) {
+            horizontalIntegral = 0.5 / horizkI;
+        } else if(horizontalIntegral * horizkI < -0.5) {
+            horizontalIntegral = -0.5 / horizkI;
         }
-        return ((currentAngle * hozkP) + 
-            (horizontalVelocity * hozkD) + 
-            (horizontalIntegral * hozkI));
+        return ((currentAngle * horizkP) + 
+            (horizontalVelocity * horizkD) + 
+            (horizontalIntegral * horizkI));
     }
 }
