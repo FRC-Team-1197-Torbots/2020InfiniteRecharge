@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ColorWheel {
-
     public String CurrentColor;
     private boolean hasBeenSpun = false;
     private int TimesSpun = 0;
@@ -111,8 +110,7 @@ public class ColorWheel {
         SmartDashboard.putString("Color Detected", ColorDetected);
         SmartDashboard.putNumber("Sample", Sample);
         SmartDashboard.putNumber("Times Supn:", TimesSpun);
-        SmartDashboard.putString("Color", MatchColor)
-        //SmartDashboard.putNumber("Proximity", proximity);
+        SmartDashboard.putString("Color", MatchColor);
     }
 
     public static enum StateMachine {   
