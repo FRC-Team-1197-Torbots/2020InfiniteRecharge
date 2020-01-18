@@ -1,26 +1,20 @@
 package frc.robot;
 
-//First Wpilib 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
-//Color Sensor
 import edu.wpi.first.wpilibj.I2C;
-//CTRE
 import com.ctre.phoenix.motorcontrol.can.VictorSPX; 
-//Rev Robotics
 import com.revrobotics.ColorSensorV3;
 
 public class Robot extends TimedRobot {
   private Joystick player1;
-  
   private VictorSPX wheeltalon;
-
+  private Drive drivecontrol;
+  private ColorWheel colorwheel;
+  
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
-
-  private ColorWheel colorwheel;
-  private Drive drivecontrol;
 
   public Robot() {
     drivecontrol = new Drive();
@@ -51,10 +45,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     String gameData;
     gameData = DriverStation.getInstance().getGameSpecificMessage();
-    if(gameData.length() > 0)
-    {
-      switch (gameData.charAt(0))
-      {
+    if(gameData.length() > 0) {
+      switch (gameData.charAt(0)) {
         case 'B' :
           colorwheel.setColor(1);
           break;
@@ -82,19 +74,8 @@ public class Robot extends TimedRobot {
   public void testPeriodic() { }
 
   //Fetch Buttons
-  public boolean getButtonA(){
-		return player1.getRawButton(1);
-	}
-
-	public boolean getButtonB(){
-		return player1.getRawButton(2);
-	}
-
-	public boolean getButtonX(){
-		return player1.getRawButton(3);
-	}
-
-	public boolean getButtonY(){
-    return player1.getRawButton(4);
-  }
+  public boolean getButtonA(){ return player1.getRawButton(1); }
+	public boolean getButtonB(){ return player1.getRawButton(2); }
+	public boolean getButtonX(){ return player1.getRawButton(3); }
+	public boolean getButtonY(){ return player1.getRawButton(4); }
 }

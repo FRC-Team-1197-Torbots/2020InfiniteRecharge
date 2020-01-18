@@ -32,7 +32,6 @@ public class Drive {
     }
 
     public void DriveController(){
-        //--  Drive Code  --//
         if(player1.getRawButton(5)) {
             shifter.set(true);
         } else {
