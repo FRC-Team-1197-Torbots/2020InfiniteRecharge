@@ -104,10 +104,10 @@ public class Turret {
         } else if(hoodIntegral * hoodkI < -0.5) {
             hoodIntegral = -0.5 / hoodkI;
         }
+
         return ((currentHoodError * hoodkP) + 
             (hoodVelocity * hoodkD) + 
-            (hoodIntegral * hoodkI));
-        }
+            (hoodIntegral * hoodkI));       
 
     }
 

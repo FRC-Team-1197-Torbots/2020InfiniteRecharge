@@ -62,13 +62,13 @@ public class Flywheel {
             }
             currentPosition = (flywheelMotor1.getSelectedSensorPosition(0) / (gearRatio * 4096));
             currentSpeed = findCurrentSpeed.estimate(currentPosition);
-            speedToSetMotor = pidRun(currentSpeed, targetSpeed);
+            //speedToSetMotor = pidRun(currentSpeed, targetSpeed);
             flywheelMotor1.set(ControlMode.PercentOutput, speedToSetMotor);
         }
     }
 
-    public double pidRun(double currentSpeed, double targetSpeed) {
+    /*public double pidRun(double currentSpeed, double targetSpeed) {
         currentError = targetSpeed - currentSpeed;
         
-    }
+    }*/
 }
