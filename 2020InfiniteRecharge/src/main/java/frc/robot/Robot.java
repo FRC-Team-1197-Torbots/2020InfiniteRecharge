@@ -7,38 +7,51 @@ import edu.wpi.first.wpilibj.I2C;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX; 
 import com.revrobotics.ColorSensorV3;
 
+import frc.robot.Drive.*;
+import frc.robot.Mechanisms.*;
+
 public class Robot extends TimedRobot {
-  private Joystick player1;
   private VictorSPX wheeltalon;
-  private Drive drivecontrol;
+  //private Drive drivecontrol;
   private ColorWheel colorwheel;
   
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
+  private DriveHardware hardware;
+	private TorDrive drive;
+	private Joystick player1;
+
+  public boolean test;
+
   public Robot() {
-    drivecontrol = new Drive();
+    hardware = new DriveHardware();																																																																																																					
+		player1 = new Joystick(0);
+		drive = new TorDrive(hardware, player1);
+
+    test = false;
     wheeltalon = new VictorSPX(0);
     colorwheel = new ColorWheel(wheeltalon, m_colorSensor, player1);
   }
   
   @Override
-  public void robotInit() { }
+  public void robotInit() { 
+    hardware.init();
+  }
   
   @Override
-  public void robotPeriodic() { }
-
-  @Override
   public void autonomousInit() { }
-
-  @Override
-  public void autonomousPeriodic() { }
 
   @Override
   public void teleopInit() {
     //1 = blue, 2 = green, 3 = red, 4 = yellow
     colorwheel.setColor(3);
     super.teleopInit();
+  }
+
+  @Override
+  public void autonomousPeriodic() { 
+    drive.Run(test, true);
   }
 
   @Override
@@ -67,11 +80,13 @@ public class Robot extends TimedRobot {
       //Code for no data received yet
     }
     colorwheel.Main();
-    drivecontrol.DriveController();
+    drive.Run(test, true);
   }
 
   @Override
-  public void testPeriodic() { }
+  public void testPeriodic() { 
+    drive.Run(test, true);
+  }
 
   //Fetch Buttons
   public boolean getButtonA(){ return player1.getRawButton(1); }

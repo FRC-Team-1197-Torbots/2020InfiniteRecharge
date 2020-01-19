@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.Mechanisms;
 
 import edu.wpi.first.wpilibj.util.Color;
 import com.revrobotics.ColorSensorV3;
