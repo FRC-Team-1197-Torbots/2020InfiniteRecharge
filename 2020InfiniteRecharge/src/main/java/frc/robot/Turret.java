@@ -38,7 +38,7 @@ public class Turret {
     private final double hoodkP = 0;
     private final double hoodkI = 0;
     private final double hoodkD = 0;
-    private final double hoodGearRatio = 500;//from the encoder to the movement fo the hood
+    private final double hoodGearRatio = 400;//from the encoder to the movement fo the hood
     private double currentHoodAngle;
     private double currentHoodError;
     private double hoodVelocity;
@@ -72,11 +72,6 @@ public class Turret {
         x = tx.getDouble(0.0);
         SmartDashboard.putNumber("X:",x);
         horizontalSpeedToSet = horizPID(x);
-        hoodSpeedToSet = hoodPID(x);
-        if(run) {
-            turretMotor.set(ControlMode.PercentOutput, horizontalSpeedToSet);
-            hoodMotor.set(ControlMode.PercentOutput, hoodSpeedToSet);
-        }
 
         y = ty.getDouble(0.0);
         SmartDashboard.putNumber("Y:",y);
@@ -86,6 +81,12 @@ public class Turret {
         intermediateCalculation = ((98.25 - height1) / distance);
         hoodAngleToSet = Math.atan(intermediateCalculation + (15/distance));//hood angle is radians
         hoodAngleToSet *= 180 / (Math.PI);//hood angle is now degrees
+        hoodSpeedToSet = hoodPID(hoodAngleToSet);
+        
+        if(run) {
+            turretMotor.set(ControlMode.PercentOutput, horizontalSpeedToSet);
+            hoodMotor.set(ControlMode.PercentOutput, hoodSpeedToSet);
+        }
 
         SmartDashboard.putNumber("Intermediate Calculation" , intermediateCalculation);
         SmartDashboard.putNumber("Hood Angle" , hoodAngleToSet);           

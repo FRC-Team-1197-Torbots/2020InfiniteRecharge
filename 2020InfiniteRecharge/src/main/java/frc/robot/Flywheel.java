@@ -5,14 +5,20 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Flywheel {
     private final double targetHighSpeed = 5000;//rpm
     private final double targetLowSpeed = 3000;
-    private final double kP = 0.01;
+    private final double kP = 0.001;
     private final double kI = 0;
     private final double kD = 0;
     private double currentError = 0;
+
+    private TorDerivative pidDerivative;
+    private double pidDerivativeResult;
+    
+    private double pidIntegral = 0;
 
     private double targetSpeed;
     private double currentSpeed;
@@ -23,9 +29,6 @@ public class Flywheel {
     private TalonSRX flywheelMotor1;
     private TalonSRX flywheelMotor2;
     private Joystick player2;
-
-
-
 
     //time stuff to make sure only goes in correct intervals
     private long currentTime;
@@ -43,6 +46,8 @@ public class Flywheel {
         flywheelMotor1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
         findCurrentSpeed = new TorDerivative(dt);
         findCurrentSpeed.resetValue(0);
+        pidDerivative = new TorDerivative(dt);
+        pidDerivative.resetValue(0);
     }
 
     public void run(boolean run) {
@@ -63,12 +68,31 @@ public class Flywheel {
             currentPosition = (flywheelMotor1.getSelectedSensorPosition(0) / (gearRatio * 4096));
             currentSpeed = findCurrentSpeed.estimate(currentPosition);
             speedToSetMotor = pidRun(currentSpeed, targetSpeed);
-            flywheelMotor1.set(ControlMode.PercentOutput, speedToSetMotor);
+
+            if(run) {
+                flywheelMotor1.set(ControlMode.PercentOutput, speedToSetMotor);
+            }
+            SmartDashboard.putNumber("current Speed", currentSpeed);
         }
     }
 
     public double pidRun(double currentSpeed, double targetSpeed) {
         currentError = targetSpeed - currentSpeed;
-        
+        pidDerivativeResult = pidDerivative.estimate(currentError);
+        pidIntegral += currentError;
+
+        if(currentError < 20) {
+            pidIntegral = 0;
+        }
+
+        if(pidIntegral * kI > 0.5) {
+            pidIntegral = 0.5 / kI;
+        } else if(pidIntegral * kI < -0.5) {
+            pidIntegral = -0.5 / kI;
+        }
+
+        return ((currentError * kP) +
+            (pidIntegral * kI) +
+            (pidDerivativeResult * kD));
     }
 }
