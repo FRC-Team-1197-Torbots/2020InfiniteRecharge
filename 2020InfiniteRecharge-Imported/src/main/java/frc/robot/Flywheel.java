@@ -13,8 +13,8 @@ public class Flywheel {
     private final double highSpeedConstant = 0.8;
     private final double lowSpeedConstant = 0.4;
     private final double adjustingConstant = 20;
-    private final double kP = 0.001;
-    private final double kI = 0.000;
+    private final double kP = 0.0012;
+    private final double kI = 0.00005;
     private final double kD = 0;
     private double currentError = 0;
 
@@ -71,19 +71,12 @@ public class Flywheel {
 
             if(player2.getRawButton(1)) {
                 targetSpeed = targetHighSpeed;
+                currentPosition = adjustingConstant * (flywheelMotor1.getSelectedSensorPosition(0) / (gearRatio * 4096));
+                currentSpeed = findCurrentSpeed.estimate(currentPosition);
+                speedToSetMotor = pidRun(currentSpeed, targetSpeed) + highSpeedConstant;
             } else {
-                targetSpeed = targetLowSpeed;
+                speedToSetMotor = lowSpeedConstant;
             }
-            currentPosition = adjustingConstant * (flywheelMotor1.getSelectedSensorPosition(0) / (gearRatio * 4096));
-            currentSpeed = findCurrentSpeed.estimate(currentPosition);
-            speedToSetMotor = pidRun(currentSpeed, targetSpeed);
-
-            if(player2.getRawButton(1)) {
-                speedToSetMotor += highSpeedConstant;
-            } else {
-                speedToSetMotor += lowSpeedConstant;
-            }
-
             if(run) {
                 flywheelMotor1.set(ControlMode.PercentOutput, speedToSetMotor);
             }
@@ -92,6 +85,7 @@ public class Flywheel {
     }
 
     public double pidRun(double currentSpeed, double targetSpeed) {
+        
         currentError = targetSpeed - currentSpeed;
         
         SmartDashboard.putNumber("currentError:", currentError);
