@@ -23,7 +23,7 @@ public class Turret {
 
     //--  PID for the horizontal spinner of the turret  --//
     private TorDerivative horizontalDerivative;
-    private final double horizkP = 0.065;
+    private final double horizkP = 0.04;
     private final double horizkI = 0;
     private final double horizkD = 0.001;
         //Gear Ratio
@@ -37,14 +37,14 @@ public class Turret {
     private final double hoodkP = 0.015;
     private final double hoodkI = 0.001;
     private final double hoodkD = 0;
-    private final double hoodGearRatio = 400;//from the encoder to the movement fo the hood
+    private final double hoodGearRatio = 40;//from the encoder to the movement fo the hood
     private double currentHoodAngle;
     private double currentHoodError;
     private double hoodVelocity;
     private double hoodIntegral = 0; 
 
     private final double angle1 = 15;
-    private final double startAngleOfHood = 50;
+    private final double startAngleOfHood = 35;
     private double angle2;
     private double hoodAngleToSet;
 
@@ -74,7 +74,7 @@ public class Turret {
     public void run(boolean run) {//gets angle of the hood
         x = tx.getDouble(0.0);
         SmartDashboard.putNumber("X:",x);
-        horizontalSpeedToSet = horizPID(x);
+        horizontalSpeedToSet = horizPID(x + 2);
 
         y = ty.getDouble(0.0);
         SmartDashboard.putNumber("Y:",y);
@@ -86,15 +86,14 @@ public class Turret {
         if(run) {
             turretMotor.set(ControlMode.PercentOutput, horizontalSpeedToSet);
             hoodMotor.set(ControlMode.PercentOutput, hoodSpeedToSet);
-        }
-        SmartDashboard.putNumber("Hood Angle" , hoodAngleToSet);           
+        }           
     }
 
     public double hoodPID(double hoodAngleToSet) {
-        currentHoodAngle = (360 * 20 * (-hoodMotor.getSelectedSensorPosition(0) / (4096 * hoodGearRatio)));
+        currentHoodAngle = (360 * (-hoodMotor.getSelectedSensorPosition(0) / (4096 * hoodGearRatio)));
         currentHoodError = hoodAngleToSet - currentHoodAngle;
         SmartDashboard.putNumber("current hood error", currentHoodError);
-        SmartDashboard.putNumber("current hood angle", currentHoodAngle);
+        SmartDashboard.putNumber("current hood angle over zero", currentHoodAngle);
         //everything goes off of current hood error
         hoodVelocity = hoodDerivative.estimate(hoodAngleToSet);
         hoodIntegral += currentHoodError * dt;

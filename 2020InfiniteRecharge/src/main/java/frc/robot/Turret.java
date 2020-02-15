@@ -2,7 +2,7 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+// import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Turret {
     private final double dt = 0.005;
     private final TalonSRX turretMotor;
-    private final VictorSPX hoodMotor;
+    private final TalonSRX hoodMotor;
 
     private final NetworkTable table;// for limelight
     private final NetworkTableEntry tx;
@@ -55,7 +55,7 @@ public class Turret {
     private double horizontalSpeedToSet;
     private double hoodSpeedToSet;
 
-    public Turret(TalonSRX turretMotor, VictorSPX hoodMotor) {
+    public Turret(TalonSRX turretMotor, TalonSRX hoodMotor) {
         table = NetworkTableInstance.getDefault().getTable("limelight-ball");
         tx = table.getEntry("tx");
         ty = table.getEntry("ty");
@@ -66,6 +66,8 @@ public class Turret {
         hoodMotor.setSelectedSensorPosition(0, 0, 0);
         horizontalDerivative = new TorDerivative(dt);
         horizontalDerivative.resetValue(0);
+        hoodDerivative = new TorDerivative(dt);
+        hoodDerivative.resetValue(0);
     }
 
     public void run(boolean run) {//gets angle of the hood
