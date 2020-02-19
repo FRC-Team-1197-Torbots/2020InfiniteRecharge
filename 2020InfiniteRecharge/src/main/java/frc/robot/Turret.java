@@ -2,7 +2,7 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-// import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Turret {
     private final double dt = 0.005;
-    private final TalonSRX turretMotor;
+    private final VictorSPX turretMotor;
     private final TalonSRX hoodMotor;
 
     private final NetworkTable table;// for limelight
@@ -35,7 +35,7 @@ public class Turret {
     
     //--  PID for the hood angle adjustment  --//
     private TorDerivative hoodDerivative;
-    private final double hoodkP = 0.1;
+    private final double hoodkP = 0.02;
     private final double hoodkI = 0;
     private final double hoodkD = 0;
     private final double hoodGearRatio = 400;//from the encoder to the movement fo the hood
@@ -44,7 +44,7 @@ public class Turret {
     private double hoodVelocity;
     private double hoodIntegral = 0; 
 
-    private final double height1 = 41.375;
+    private final double height1 = 15;
     private final double height2 = 94.5;
     private final double angle1 = 15;
     private double angle2;
@@ -55,8 +55,10 @@ public class Turret {
     private double horizontalSpeedToSet;
     private double hoodSpeedToSet;
 
-    public Turret(TalonSRX turretMotor, TalonSRX hoodMotor) {
-        table = NetworkTableInstance.getDefault().getTable("limelight-ball");
+    private double DebugAngle;
+
+    public Turret(VictorSPX turretMotor, TalonSRX hoodMotor) {
+        table = NetworkTableInstance.getDefault().getTable("limelight-turret");
         tx = table.getEntry("tx");
         ty = table.getEntry("ty");
         this.turretMotor = turretMotor;
@@ -68,30 +70,47 @@ public class Turret {
         horizontalDerivative.resetValue(0);
         hoodDerivative = new TorDerivative(dt);
         hoodDerivative.resetValue(0);
+
+        DebugAngle = 40.0;
     }
 
-    public void run(boolean run) {//gets angle of the hood
+    public void run(boolean run, boolean xButton, boolean yButton, boolean DEBUG) {//gets angle of the hood
+
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!//
+        if(xButton) {
+            DebugAngle += 1.0 / 40.0;
+        }
+
+        if(yButton) {
+            DebugAngle -= 1.0 / 40.0;
+        }
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!//
+
         x = tx.getDouble(0.0);
+        y = ty.getDouble(0.0);
+
         SmartDashboard.putNumber("X:",x);
         horizontalSpeedToSet = horizPID(x);
 
-        y = ty.getDouble(0.0);
-        SmartDashboard.putNumber("Y:",y);
-        angle2 = y;
+        SmartDashboard.putNumber("Y:",y);        
         distance = (height2-height1) * (1 / Math.tan(Math.toRadians(angle1+angle2)));
         SmartDashboard.putNumber("D", distance);
         intermediateCalculation = ((98.25 - height1) / distance);
         hoodAngleToSet = Math.atan(intermediateCalculation + (15/distance));//hood angle is radians
         hoodAngleToSet *= 180 / (Math.PI);//hood angle is now degrees
+        if(DEBUG) {
+            hoodAngleToSet = DebugAngle;
+        }
         hoodSpeedToSet = hoodPID(hoodAngleToSet);
         
         if(run) {
             turretMotor.set(ControlMode.PercentOutput, horizontalSpeedToSet);
             hoodMotor.set(ControlMode.PercentOutput, hoodSpeedToSet);
         }
-
+        SmartDashboard.putNumber("angle2", angle2);
         SmartDashboard.putNumber("Intermediate Calculation" , intermediateCalculation);
         SmartDashboard.putNumber("Hood Angle" , hoodAngleToSet);           
+        SmartDashboard.putNumber("horizSpeedtoSet" , horizontalSpeedToSet);
     }
 
     public double hoodPID(double hoodAngleToSet) {
@@ -128,6 +147,6 @@ public class Turret {
         }
         return ((currentAngle * horizkP) + 
             (horizontalVelocity * horizkD) + 
-            (horizontalIntegral * horizkI));
+            (horizontalIntegral * horizkI));            
     }
 }

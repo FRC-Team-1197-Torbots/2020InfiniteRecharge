@@ -38,7 +38,8 @@ public class Flywheel {
     private final double gearRatio = 1;// ratio from encoder to flywheel
     private CANSparkMax flywheelMotor1;
     private CANSparkMax flywheelMotor2;
-    private CANEncoder flywheelEncoder;
+    // private CANEncoder flywheelEncoder1;
+    // private CANEncoder flywheelEncoder2;
     private Joystick player2;
 
     // time stuff to make sure only goes in correct intervals
@@ -52,10 +53,11 @@ public class Flywheel {
     public Flywheel(CANSparkMax flywheelMotor1, CANSparkMax flywheelMotor2, Joystick player2) {
         this.flywheelMotor1 = flywheelMotor1;
         this.flywheelMotor2 = flywheelMotor2;
-        this.flywheelMotor2.follow(this.flywheelMotor1);
-        this.flywheelMotor1.setInverted(false);
-        this.flywheelMotor2.setInverted(true);
-        this.flywheelEncoder = this.flywheelMotor1.getEncoder();
+        // this.flywheelMotor2.follow(this.flywheelMotor1);
+        // this.flywheelMotor1.setInverted(false);
+        // this.flywheelEncoder1 = this.flywheelMotor1.getEncoder();
+        // this.flywheelEncoder2 = this.flywheelMotor2.getEncoder();
+
 
         this.player2 = player2;
         findCurrentSpeed = new TorDerivative(dt);
@@ -66,12 +68,24 @@ public class Flywheel {
     }
 
     public void resetEncoder() {
-        flywheelEncoder.getPosition();
+        // flywheelEncoder1.setPosition(0.0);
+        // flywheelEncoder2.setPosition(0.0);
     }
     
 
     public void run(boolean run) {
-        currentTime = (long) (Timer.getFPGATimestamp() * 1000);
+        
+        // if(player2.getRawButton(1)){
+        //     flywheelMotor1.set(.75);
+        //     flywheelMotor2.set(-.75);
+        // }
+        // else{
+        //     flywheelMotor1.set(0.5);
+        //     flywheelMotor2.set(-0.5);
+        // }
+        
+        
+        /*currentTime = (long) (Timer.getFPGATimestamp() * 1000);
         if (((currentTime - startTime) - ((currentTime - startTime) % (dt * 1000))) > // has current time minus start time to see the relative time the trajectory has been going
             ((lastCountedTime - startTime) - ((lastCountedTime - startTime) % (dt * 1000))) // subtracts that mod dt times 1000 so that it is floored to
             // the nearest multiple of dt times 1000 then checks if that is greater than the last one to see if it is time to move on to the next tick
@@ -82,24 +96,33 @@ public class Flywheel {
 
             if(player2.getRawButton(1)) {
                 targetSpeed = targetHighSpeed;
-                currentPosition = (adjustingConstant * flywheelEncoder.getPosition()) / (gearRatio);
+                // currentPosition = (adjustingConstant * flywheelEncoder1.getPosition()) / (gearRatio);
+                currentPosition = (adjustingConstant * 1) / (gearRatio);
                 currentSpeed = findCurrentSpeed.estimate(currentPosition) * 60;//rpm
                 speedToSetMotor = pidRun(currentSpeed, targetSpeed) + highSpeedConstant;
             } else {
                 targetSpeed = targetLowSpeed;
-                currentPosition = (adjustingConstant * flywheelEncoder.getPosition()) / (gearRatio);
+                // currentPosition = (adjustingConstant * flywheelEncoder1.getPosition()) / (gearRatio);
+                currentPosition = (adjustingConstant * 1) / (gearRatio);
                 currentSpeed = findCurrentSpeed.estimate(currentPosition) * 60;//rpm
                 speedToSetMotor = pidRun(currentSpeed, targetSpeed) + lowSpeedConstant;
                 speedToSetMotor = lowSpeedConstant;
-            }
+            }*/
             if(run) {
-                flywheelMotor1.set(speedToSetMotor);
-                flywheelMotor2.set(speedToSetMotor);
-            
+
+                if(player2.getRawButton(1)) {
+                    flywheelMotor1.set(-0.9f);
+                    flywheelMotor2.set(.9f);
+                } else {
+                    flywheelMotor1.set(-0.5f);
+                    flywheelMotor2.set(0.5f);
+                }
             }
+           
             SmartDashboard.putNumber("current Speed", currentSpeed);
-        }
+        // }
     }
+    
 
     public double pidRun(double currentSpeed, double targetSpeed) {
         
