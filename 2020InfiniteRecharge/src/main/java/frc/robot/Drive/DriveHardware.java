@@ -14,10 +14,12 @@ public class DriveHardware {
 	
 	private final CANSparkMax rightMaster;
 	private final CANSparkMax rightSlave1;
+	private final CANSparkMax rightSlave2;
 	private final CANSparkMax leftMaster;
 	private final CANSparkMax leftSlave1;
-	// private Encoder leftEncoder;
-	// private Encoder rightEncoder;
+	private final CANSparkMax leftSlave2;
+	private Encoder leftEncoder;
+	private Encoder rightEncoder;
 	
 	private double leftSpeed;
 	private double rightSpeed;
@@ -53,26 +55,34 @@ public class DriveHardware {
 	 */
 	
 	public DriveHardware() {
-		// gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+		gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
 		
 		solenoid = new Solenoid(0);
 
-		leftMaster = new CANSparkMax(3, MotorType.kBrushless);
-		leftSlave1 = new CANSparkMax(4, MotorType.kBrushless);  
-		rightMaster = new CANSparkMax(5, MotorType.kBrushless);
-		rightSlave1 = new CANSparkMax(6, MotorType.kBrushless);
+		leftMaster = new CANSparkMax(1, MotorType.kBrushless);
+		leftSlave1 = new CANSparkMax(2, MotorType.kBrushless);
+		leftSlave2 = new CANSparkMax(3, MotorType.kBrushless);  
+		rightMaster = new CANSparkMax(4, MotorType.kBrushless);
+		rightSlave1 = new CANSparkMax(5, MotorType.kBrushless);
+		rightSlave2 = new CANSparkMax(6, MotorType.kBrushless);
 
-		// leftEncoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
-		// rightEncoder = new Encoder(2, 3, false, Encoder.EncodingType.k4X);
+		leftEncoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
+		rightEncoder = new Encoder(2, 3, false, Encoder.EncodingType.k4X);
 		
 		leftMaster.setInverted(false); // Left master must be attached to the farthest CIM from the output shaft
 		leftSlave1.setInverted(false); 
+		leftSlave2.setInverted(false);
 		
 		rightMaster.setInverted(true); // Right master must be attached to the farthest CIM from the output shaft
-		rightSlave1.setInverted(true); 
+		rightSlave1.setInverted(true);
+		rightSlave2.setInverted(true); 
 
-		// resetEncoder();
-		// resetGyro();
+		leftSlave1.follow(leftMaster);
+		leftSlave2.follow(leftMaster);
+		rightSlave1.follow(rightMaster);
+		rightSlave2.follow(rightMaster);
+		resetEncoder();
+		resetGyro();
 	}
 
 	public void setMotorSpeeds(double rightSpeed, double leftSpeed) {
@@ -93,34 +103,32 @@ public class DriveHardware {
 	// Setting the left master Talon's speed to the given parameter
 	public void SetLeft(double speed) {
 		leftMaster.set(speed);
-		leftSlave1.set(speed);
 	}
 
 	// Setting the right master Talon's speed to the given parameter
 	public void SetRight(double speed) {
 		rightMaster.set(speed);
-		rightSlave1.set(speed);
 	}
 
 	// Getting raw position value from the right encoder
-	// public double getRightEncoder() {
-	// 	return rightEncoder.getRaw();
-	// }
+	public double getRightEncoder() {
+		return rightEncoder.getRaw();
+	}
 
 	// Getting raw position value from the left encoder
-	// public double getLeftEncoder() {
-	// 	return leftEncoder.getRaw();
-	// }
+	public double getLeftEncoder() {
+		return leftEncoder.getRaw();
+	}
 
 	// Getting the average encoder position from both encoders
-	// public double getAverageEncoderPosition() {
-	// 	return (rightEncoder.getRaw() + leftEncoder.getRaw()) * 0.5;
-	// }
+	public double getAverageEncoderPosition() {
+		return (rightEncoder.getRaw() + leftEncoder.getRaw()) * 0.5;
+	}
 
 	// Getting the position from both encoders in meters
-	// public double getPosition() {
-	// 	return ((rightEncoder.getRaw() + leftEncoder.getRaw()) * 0.5) / encoderTicksPerMeter; // [meters]
-	// }
+	public double getPosition() {
+		return ((rightEncoder.getRaw() + leftEncoder.getRaw()) * 0.5) / encoderTicksPerMeter; // [meters]
+	}
 
 	// Getting the angle in radians from the spartan board
 	public double getHeading() {
@@ -140,10 +148,10 @@ public class DriveHardware {
 	}
 
 	// Method to reset the encoder values
-	// public void resetEncoder() {
-	// 	leftEncoder.reset();
-	// 	rightEncoder.reset();
-	// }
+	public void resetEncoder() {
+		leftEncoder.reset();
+		rightEncoder.reset();
+	}
 
 	// Method to reset the spartan board gyro values
 	public void resetGyro() {

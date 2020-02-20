@@ -5,6 +5,7 @@ import com.revrobotics.ColorSensorV3;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ColorWheel {
@@ -16,17 +17,19 @@ public class ColorWheel {
     private int MatchColorNumber;
     private String MatchColor;
     private VictorSPX wheeltalon;
+    private Solenoid colorWheelPiston;
     private ColorSensorV3 m_colorSensor;
-    private Joystick player1;
+    private Joystick player2;
     private int DetectedColorInt;
 
     //Enum for State
     StateMachine StateMachE = StateMachine.ONCOLOUR;
 
-    public ColorWheel(VictorSPX wheeltalon, ColorSensorV3 m_colorSensor, Joystick player1) {
-        this.player1 = player1;
+    public ColorWheel(VictorSPX wheeltalon, ColorSensorV3 m_colorSensor, Joystick player2, Solenoid colorWheelPiston) {
+        this.player2 = player2;
         this.wheeltalon = wheeltalon;
         this.m_colorSensor = m_colorSensor;
+        this.colorWheelPiston = colorWheelPiston;
     }
 
     public void setColor(int Color) {
@@ -43,6 +46,13 @@ public class ColorWheel {
     }
 
     public void Main(){
+
+        if(player2.getRawButton(5)) {
+            colorWheelPiston.set(true);
+        }
+        else{
+            colorWheelPiston.set(false);
+        }
         if(Sample == 30) {
             Sample = 0;
         } else {
@@ -75,7 +85,7 @@ public class ColorWheel {
 
         //Button Detection and State Machine
         //A = 1, B = 2, X = 3, Y = 4
-        if(player1.getRawButton(1)) {
+        if(player2.getRawButton(1)) {
             System.out.print("l");
             StateMachE = StateMachine.GO1LEFT;
             if(ColorDetected.equals(MatchColor)) {
@@ -89,7 +99,7 @@ public class ColorWheel {
             }
         }
 
-        if(player1.getRawButton(2) && hasBeenSpun == false) {
+        if(player2.getRawButton(2) && hasBeenSpun == false) {
             CurrentColor = ColorDetected;
             hasBeenSpun = true;
             wheeltalon.set(ControlMode.PercentOutput, 0.5);
