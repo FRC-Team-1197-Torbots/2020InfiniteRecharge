@@ -26,14 +26,12 @@ public class Robot extends TimedRobot {
   private final Compressor compressor;
   // private Flywheel flywheel;
   // private Turret turret;
-  private VictorSPX climbTalon1;
-  private VictorSPX climbTalon2;
+  private CANSparkMax climbTalon1;
   private VictorSPX colorwheelTalon;
   private Solenoid adjustingPiston;
   private Solenoid colorwheelPiston;
   private Schwingster climber;
   
-  private VictorSPX wheeltalon;
   //private Drive drivecontrol;
   private ColorWheel colorwheel;
   
@@ -42,10 +40,18 @@ public class Robot extends TimedRobot {
 
   private DriveHardware hardware;
 	private TorDrive drive;
-	private Joystick player1;
+  private Joystick player1;
+  private Joystick player2;
 
   public boolean test;
 
+  private final CANSparkMax rightMaster;
+	private final CANSparkMax rightSlave1;
+	private final CANSparkMax rightSlave2;
+	private final CANSparkMax leftMaster;
+	private final CANSparkMax leftSlave1;
+  private final CANSparkMax leftSlave2;
+  
   public Robot() {
     // turretMotor = new VictorSPX(10);
     // hoodMotor = new TalonSRX(8);
@@ -55,22 +61,28 @@ public class Robot extends TimedRobot {
     adjustingPiston = new Solenoid(4);
     colorwheelPiston = new Solenoid(3);
 
-    climbTalon1 = new VictorSPX(1);
-    climbTalon2 = new VictorSPX(2);
-    colorwheelTalon = new VictorSPX(3);
+    climbTalon1 = new CANSparkMax(9, MotorType.kBrushless);
+    colorwheelTalon = new VictorSPX(2);
   
     
     hardware = new DriveHardware();																																																																																																					
-		player1 = new Joystick(0);
+    player1 = new Joystick(0);
+    player2 = new Joystick(1);
 		drive = new TorDrive(hardware, player1);
 
     test = false;
-    wheeltalon = new VictorSPX(0);
     
     // turret = new Turret(turretMotor, hoodMotor);
     // flywheel = new Flywheel(flywheelMotor1, flywheelMotor2, player1);
-    climber = new Schwingster(player1, climbTalon1, climbTalon2, adjustingPiston);
-    colorwheel = new ColorWheel(wheeltalon, m_colorSensor, player1, colorwheelPiston);
+    climber = new Schwingster(player2, climbTalon1, adjustingPiston);
+    colorwheel = new ColorWheel(colorwheelTalon, m_colorSensor, player2, colorwheelPiston);
+
+    leftMaster = new CANSparkMax(4, MotorType.kBrushless);
+		leftSlave1 = new CANSparkMax(5, MotorType.kBrushless);
+		leftSlave2 = new CANSparkMax(6, MotorType.kBrushless);  
+		rightMaster = new CANSparkMax(1, MotorType.kBrushless);
+		rightSlave1 = new CANSparkMax(2, MotorType.kBrushless);
+		rightSlave2 = new CANSparkMax(3, MotorType.kBrushless);
   }
   
   @Override
@@ -120,7 +132,6 @@ public class Robot extends TimedRobot {
       //Code for no data received yet
     }
     colorwheel.Main();
-    drive.Run(test, true);
 
     boolean xButton = player1.getRawButton(3);
     boolean yButton = player1.getRawButton(4);
@@ -128,6 +139,7 @@ public class Robot extends TimedRobot {
     // turret.run(false, xButton, yButton, false);
     // flywheel.run(true);
     climber.run();
+    drive.Run(test, true);
     // colorwheel.run(true);
     compressor.start();
   }
