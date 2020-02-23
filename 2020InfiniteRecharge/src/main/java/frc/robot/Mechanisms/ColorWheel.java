@@ -6,16 +6,20 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ColorWheel {
-    public String CurrentColor;
-    private boolean hasBeenSpun = false;
     private int TimesSpun = 0;
-    private int Sample = 0;
+    private int countedChanges = 0;
+    private long currentTime = (long) (1000 * Timer.getFPGATimestamp());
+    private long lastTimeButton1Pressed = currentTime;
+    private long lastTimeButton2Pressed = currentTime;
+    private long startTimeGoDown = currentTime;
 
     private int MatchColorNumber;
     private String MatchColor;
+    private String lastColor;
     private VictorSPX wheeltalon;
     private Solenoid colorWheelPiston;
     private ColorSensorV3 m_colorSensor;
@@ -23,7 +27,17 @@ public class ColorWheel {
     private int DetectedColorInt;
 
     //Enum for State
-    StateMachine StateMachE = StateMachine.ONCOLOUR;
+
+    public static enum mainStateMachine {   
+        IDLE, RunRotations, STARTforcolor, GO1LEFTforcolor, GO1RIGHTforcolor, GO2RIGHTforcolor, GoDown;
+        private mainStateMachine() {}
+    }
+
+    mainStateMachine StateMachE = mainStateMachine.IDLE;
+
+    private Color ColorInput;
+    private int ProximityInput;
+    private String ColorDetected;
 
     public ColorWheel(VictorSPX wheeltalon, ColorSensorV3 m_colorSensor, Joystick player2, Solenoid colorWheelPiston) {
         this.player2 = player2;
@@ -46,23 +60,49 @@ public class ColorWheel {
     }
 
     public void Main(){
+        currentTime = (long) (1000 * Timer.getFPGATimestamp());
+        ColorInput = m_colorSensor.getColor();
+        ProximityInput = m_colorSensor.getProximity();
+        SmartDashboard.putNumber("proimity input", ProximityInput);
+        ColorDetected = "None";
+        getCurrentColor();
 
-        if(player2.getRawButton(5)) {
-            colorWheelPiston.set(true);
+        //Button Detection and State Machine
+        //A = 1, B = 2, X = 3, Y = 4
+
+        if(player2.getRawButton(1)) {
+            if(currentTime - lastTimeButton1Pressed > 250) {
+                lastTimeButton1Pressed = currentTime;
+                if(StateMachE == mainStateMachine.IDLE) {
+                    StateMachE = mainStateMachine.STARTforcolor;
+                } else {
+                    StateMachE = mainStateMachine.IDLE;
+                }
+            }
+        } else if(player2.getRawButton(2)) {
+            if(currentTime - lastTimeButton2Pressed > 250) {
+                lastTimeButton2Pressed = currentTime;
+                if(StateMachE == mainStateMachine.IDLE) {
+                    StateMachE = mainStateMachine.RunRotations;
+                } else {
+                    StateMachE = mainStateMachine.IDLE;
+                }
+            }
         }
-        else{
-            colorWheelPiston.set(false);
-        }
-        if(Sample == 30) {
-            Sample = 0;
-        } else {
-            Sample++;
-        }
+        runStateMachine();
+        controlPneumatic();
         
-        Color ColorInput = m_colorSensor.getColor();
-        int ProximityInput = m_colorSensor.getProximity();
-        String ColorDetected = "None";
-        
+        //Display Data on Smart Dashboard
+        SmartDashboard.putNumber("Red", ColorInput.red);
+        SmartDashboard.putNumber("Green", ColorInput.green);
+        SmartDashboard.putNumber("Blue", ColorInput.blue);
+        SmartDashboard.putString("Color Detected", ColorDetected);
+        SmartDashboard.putNumber("Times Supn:", TimesSpun);
+        SmartDashboard.putString("Color", MatchColor);
+        SmartDashboard.putString("current state:", StateMachE.toString());
+    }
+
+    public void getCurrentColor() {
         //Color Detection Algorithm
         if(ColorInput.red > ColorInput.blue && ColorInput.red > ColorInput.green && ColorInput.red > 0.4){
             ColorDetected = "Red";
@@ -73,75 +113,104 @@ public class ColorWheel {
         } else if(Math.abs(ColorInput.green-ColorInput.blue) < 0.25) {
             ColorDetected = "Blue";
             DetectedColorInt = 4;
-        } else if(ColorInput.green > ColorInput.blue && ColorInput.green > ColorInput.red) {
+        } else {
             ColorDetected = "Green";
             DetectedColorInt = 3; 
-        } else {
-            ColorDetected = "Invalid";
         }
-        if(ProximityInput<50) {
-            ColorDetected = "Out Of Range";
-        }
-
-        //Button Detection and State Machine
-        //A = 1, B = 2, X = 3, Y = 4
-        if(player2.getRawButton(1)) {
-            System.out.print("l");
-            StateMachE = StateMachine.GO1LEFT;
-            if(ColorDetected.equals(MatchColor)) {
-                StateMachE = StateMachine.ONCOLOUR;
-            } else if(DetectedColorInt == MatchColorNumber-1 || (MatchColorNumber-1==0 && DetectedColorInt == 4)) {
-                StateMachE = StateMachine.GO1LEFT;
-            } else if(DetectedColorInt == MatchColorNumber+1 || (MatchColorNumber+1==4 && DetectedColorInt == 1)) {
-                StateMachE = StateMachine.GO1RIGHT;
-            } else if(DetectedColorInt == MatchColorNumber+2 || (MatchColorNumber+2==4 && DetectedColorInt == 1) || (MatchColorNumber+2==5 && DetectedColorInt == 2)) {
-                StateMachE = StateMachine.GO2RIGHT;
-            }
-        }
-
-        if(player2.getRawButton(2) && hasBeenSpun == false) {
-            CurrentColor = ColorDetected;
-            hasBeenSpun = true;
-            wheeltalon.set(ControlMode.PercentOutput, 0.5);
-        } else if(TimesSpun == 4) {
-            wheeltalon.set(ControlMode.PercentOutput, 0);
-        } else if (hasBeenSpun == true) {
-            if(Sample == 1 && ColorDetected.equals(CurrentColor)) {
-                TimesSpun++;
-            }
-        } else {
-            StateMachine();
-        }
-        
-        //Display Data on Smart Dashboard
-        SmartDashboard.putNumber("Red", ColorInput.red);
-        SmartDashboard.putNumber("Green", ColorInput.green);
-        SmartDashboard.putNumber("Blue", ColorInput.blue);
-        SmartDashboard.putString("Color Detected", ColorDetected);
-        SmartDashboard.putNumber("Sample", Sample);
-        SmartDashboard.putNumber("Times Supn:", TimesSpun);
-        SmartDashboard.putString("Color", MatchColor);
     }
 
-    public static enum StateMachine {   
-        ONCOLOUR, GO1LEFT, GO1RIGHT, GO2RIGHT;
-        private StateMachine() {}
+    public void controlPneumatic() {
+        if(StateMachE != mainStateMachine.IDLE) {
+            colorWheelPiston.set(true);
+        } else {
+            colorWheelPiston.set(false);
+        }
     }
 
-    public void StateMachine() {
+    public void runStateMachine() {
         switch(StateMachE) {
-            case ONCOLOUR:
-                wheeltalon.set(ControlMode.PercentOutput, 0);
+            case IDLE:
+                lastColor = ColorDetected;
+                countedChanges = 0;
+                wheeltalon.set(ControlMode.PercentOutput, 0.0);
                 break;
-            case GO1LEFT:
-                wheeltalon.set(ControlMode.PercentOutput, 0.25);
+            case STARTforcolor:
+                lastColor = ColorDetected;
+                if(ColorDetected.equals(MatchColor)) {
+                    startTimeGoDown = currentTime;
+                    StateMachE = mainStateMachine.GoDown;
+                } else if(DetectedColorInt == MatchColorNumber-1 || (MatchColorNumber-1==0 && DetectedColorInt == 4)) {
+                    StateMachE = mainStateMachine.GO1LEFTforcolor;
+                } else if(DetectedColorInt == MatchColorNumber+1 || (MatchColorNumber+1==4 && DetectedColorInt == 1)) {
+                    StateMachE = mainStateMachine.GO1RIGHTforcolor;
+                // } else if(DetectedColorInt == MatchColorNumber+2 || (MatchColorNumber+2==4 && DetectedColorInt == 1) || (MatchColorNumber+2==5 && DetectedColorInt == 2)) {
+                } else {
+                    StateMachE = mainStateMachine.GO2RIGHTforcolor;
+                }
+                wheeltalon.set(ControlMode.PercentOutput, 0.0);
                 break;
-            case GO1RIGHT:
-                wheeltalon.set(ControlMode.PercentOutput, -0.25);
+            case GO1LEFTforcolor:
+                lastColor = ColorDetected;
+                if(ColorDetected.equals(MatchColor)) {
+                    startTimeGoDown = currentTime;
+                    StateMachE = mainStateMachine.GoDown;
+                } else if(DetectedColorInt == MatchColorNumber-1 || (MatchColorNumber-1==0 && DetectedColorInt == 4)) {
+                    StateMachE = mainStateMachine.GO1LEFTforcolor;
+                } else if(DetectedColorInt == MatchColorNumber+1 || (MatchColorNumber+1==4 && DetectedColorInt == 1)) {
+                    StateMachE = mainStateMachine.GO1RIGHTforcolor;
+                // } else if(DetectedColorInt == MatchColorNumber+2 || (MatchColorNumber+2==4 && DetectedColorInt == 1) || (MatchColorNumber+2==5 && DetectedColorInt == 2)) {
+                } else {
+                    StateMachE = mainStateMachine.GO2RIGHTforcolor;
+                }
+                wheeltalon.set(ControlMode.PercentOutput, 0.6);
                 break;
-            case GO2RIGHT:
-                wheeltalon.set(ControlMode.PercentOutput, -0.5);
-                break;    
+            case GO1RIGHTforcolor:
+                lastColor = ColorDetected;
+                if(ColorDetected.equals(MatchColor)) {
+                    startTimeGoDown = currentTime;
+                    StateMachE = mainStateMachine.GoDown;
+                } else if(DetectedColorInt == MatchColorNumber-1 || (MatchColorNumber-1==0 && DetectedColorInt == 4)) {
+                    StateMachE = mainStateMachine.GO1LEFTforcolor;
+                } else if(DetectedColorInt == MatchColorNumber+1 || (MatchColorNumber+1==4 && DetectedColorInt == 1)) {
+                    StateMachE = mainStateMachine.GO1RIGHTforcolor;
+                // } else if(DetectedColorInt == MatchColorNumber+2 || (MatchColorNumber+2==4 && DetectedColorInt == 1) || (MatchColorNumber+2==5 && DetectedColorInt == 2)) {
+                } else {
+                    StateMachE = mainStateMachine.GO2RIGHTforcolor;
+                }
+                wheeltalon.set(ControlMode.PercentOutput, -0.6);
+                break;
+            case GO2RIGHTforcolor:
+                lastColor = ColorDetected;
+                if(ColorDetected.equals(MatchColor)) {
+                    startTimeGoDown = currentTime;
+                    StateMachE = mainStateMachine.GoDown;
+                } else if(DetectedColorInt == MatchColorNumber-1 || (MatchColorNumber-1==0 && DetectedColorInt == 4)) {
+                    StateMachE = mainStateMachine.GO1LEFTforcolor;
+                } else if(DetectedColorInt == MatchColorNumber+1 || (MatchColorNumber+1==4 && DetectedColorInt == 1)) {
+                    StateMachE = mainStateMachine.GO1RIGHTforcolor;
+                // } else if(DetectedColorInt == MatchColorNumber+2 || (MatchColorNumber+2==4 && DetectedColorInt == 1) || (MatchColorNumber+2==5 && DetectedColorInt == 2)) {
+                } else {
+                    StateMachE = mainStateMachine.GO2RIGHTforcolor;
+                }
+                wheeltalon.set(ControlMode.PercentOutput, -0.6);
+                break;  
+            case GoDown:
+                lastColor = ColorDetected;
+                if(currentTime > startTimeGoDown + 1500) {
+                    StateMachE = mainStateMachine.IDLE;
+                }
+                wheeltalon.set(ControlMode.PercentOutput, 0.0);
+                break;
+            case RunRotations:
+                if(!ColorDetected.equals(lastColor)) {
+                    countedChanges++;
+                    lastColor = ColorDetected;
+                }
+                if(countedChanges > 30) {
+                    StateMachE = mainStateMachine.IDLE;
+                }
+                wheeltalon.set(ControlMode.PercentOutput, 1);
+                break;
         } 
     }
 }

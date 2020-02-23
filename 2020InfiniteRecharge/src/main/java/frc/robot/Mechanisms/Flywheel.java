@@ -110,8 +110,8 @@ public class Flywheel {
             if(run) {
 
                 if(player2.getRawButton(1)) {
-                    flywheelMotor1.set(-0.9f);
-                    flywheelMotor2.set(.9f);
+                    flywheelMotor1.set(-0.6f);
+                    flywheelMotor2.set(.6f);
                 } else {
                     flywheelMotor1.set(-0.5f);
                     flywheelMotor2.set(0.5f);

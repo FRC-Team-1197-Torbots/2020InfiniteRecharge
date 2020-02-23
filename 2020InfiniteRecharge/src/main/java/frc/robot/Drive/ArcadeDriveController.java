@@ -1,6 +1,7 @@
 package frc.robot.Drive;
 
 import frc.robot.PID_Tools.*;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 // import edu.wpi.first.networktables.NetworkTable;
 // import edu.wpi.first.networktables.NetworkTableEntry;
@@ -10,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ArcadeDriveController extends DriveController {
 
+   private DigitalInput colorWheelDIO;
    private double throttleAxis;
    private double arcadeSteerAxis;
    private double leftOutput;
@@ -91,6 +93,7 @@ public class ArcadeDriveController extends DriveController {
    public ArcadeDriveController(DriveHardware hardware, Joystick player1) {
        super(hardware, player1);
        this.player1 = player1;
+       colorWheelDIO = new DigitalInput(0);
 
        // this is the PID
     //    limeLightPID = new BantorPID(kV, kA, positionkP, positionkI, positionkD, velocitykP, velocitykI, velocitykD, dt,
@@ -144,6 +147,11 @@ public class ArcadeDriveController extends DriveController {
            }
            arcadeSteerAxis = Math.pow(arcadeSteerAxis, 3);
            throttleAxis = Math.pow(throttleAxis, 3);
+
+           if(player1.getRawButton(2)) {
+               throttleAxis *= 0.25;
+               arcadeSteerAxis *= 0.25;
+           }
            // get all the values from the limelight
         //    SmartDashboard.putNumber("tx:", tx.getDouble(0.0));
         //    SmartDashboard.putNumber("tx2:", tx2.getDouble(0.0));
@@ -185,23 +193,23 @@ public class ArcadeDriveController extends DriveController {
 
         //    }
 
-           throttleAxis *= weight;
-           for(double lambda:throttleArray) {
-               throttleAxis += weight * lambda;
-           }
-           for(int i = ((int)matrixLength - 1); i >= 1; i--) {
-               throttleArray[i] = throttleArray[i - 1];
-           }
-           throttleArray[0] = throttleAxis;
+        //    throttleAxis *= weight;
+        //    for(double lambda:throttleArray) {
+        //        throttleAxis += weight * lambda;
+        //    }
+        //    for(int i = ((int)matrixLength - 1); i >= 1; i--) {
+        //        throttleArray[i] = throttleArray[i - 1];
+        //    }
+        //    throttleArray[0] = throttleAxis;
 
-           arcadeSteerAxis *= Aweight;
-           for(double lambda:arcadeArray) {
-               arcadeSteerAxis += Aweight * lambda;
-           }
-           for(int c = ((int)AmatrixLength - 1); c >= 1; c--) {
-               arcadeArray[c] = arcadeArray[c - 1];
-           }
-           arcadeArray[0] = arcadeSteerAxis;
+        //    arcadeSteerAxis *= Aweight;
+        //    for(double lambda:arcadeArray) {
+        //        arcadeSteerAxis += Aweight * lambda;
+        //    }
+        //    for(int c = ((int)AmatrixLength - 1); c >= 1; c--) {
+        //        arcadeArray[c] = arcadeArray[c - 1];
+        //    }
+        //    arcadeArray[0] = arcadeSteerAxis;
            arcadeSteerAxis *= 0.5;
 
            if (throttleAxis > 0.0D) {
@@ -221,6 +229,12 @@ public class ArcadeDriveController extends DriveController {
                    rightMotorSpeed = -Math.max(-throttleAxis, -arcadeSteerAxis);
                }
            }           
+
+           //for color wheel DIO
+           if(!colorWheelDIO.get() && !player1.getRawButton(3)) {
+               rightMotorSpeed = 0;
+               leftMotorSpeed = 0;
+           }
            setRightOutput(rightMotorSpeed);
            setLeftOutput(leftMotorSpeed);
        }

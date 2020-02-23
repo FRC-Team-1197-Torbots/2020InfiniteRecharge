@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.I2C;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
@@ -21,12 +22,12 @@ public class Robot extends TimedRobot {
   
   // private final VictorSPX turretMotor;
   // private final TalonSRX hoodMotor;
-  // private final CANSparkMax flywheelMotor1;
-  // private final CANSparkMax flywheelMotor2;
+  private final CANSparkMax flywheelMotor1;
+  private final CANSparkMax flywheelMotor2;
   private final Compressor compressor;
   // private Flywheel flywheel;
   // private Turret turret;
-  private CANSparkMax climbTalon1;
+  private VictorSPX climbTalon1;
   private VictorSPX colorwheelTalon;
   private Solenoid adjustingPiston;
   private Solenoid colorwheelPiston;
@@ -44,6 +45,7 @@ public class Robot extends TimedRobot {
   private Joystick player2;
 
   public boolean test;
+  private String gameData;
 
   private final CANSparkMax rightMaster;
 	private final CANSparkMax rightSlave1;
@@ -55,14 +57,14 @@ public class Robot extends TimedRobot {
   public Robot() {
     // turretMotor = new VictorSPX(10);
     // hoodMotor = new TalonSRX(8);
-    // flywheelMotor1 = new CANSparkMax(7, MotorType.kBrushless);
-    // flywheelMotor2 = new CANSparkMax(9, MotorType.kBrushless);
+    flywheelMotor1 = new CANSparkMax(7, MotorType.kBrushless);
+    flywheelMotor2 = new CANSparkMax(9, MotorType.kBrushless);
     compressor = new Compressor();
     adjustingPiston = new Solenoid(4);
     colorwheelPiston = new Solenoid(3);
 
-    climbTalon1 = new CANSparkMax(9, MotorType.kBrushless);
-    colorwheelTalon = new VictorSPX(2);
+    climbTalon1 = new VictorSPX(10);
+    colorwheelTalon = new VictorSPX(3);
   
     
     hardware = new DriveHardware();																																																																																																					
@@ -89,6 +91,7 @@ public class Robot extends TimedRobot {
   public void robotInit() { 
     compressor.start();
     hardware.init();
+
   }
   
   @Override
@@ -97,7 +100,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     //1 = blue, 2 = green, 3 = red, 4 = yellow
-    colorwheel.setColor(3);
+    colorWheelRun();
     super.teleopInit();
   }
 
@@ -107,8 +110,27 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+
+
+
+
   public void teleopPeriodic() {
-    String gameData;
+    // turret.run(false, xButton, yButton, false);
+    // flywheel.run(true);
+    climber.run();
+    //drive.Run(test, true);
+   //colorWheelRun();
+   // colorwheel.Main();
+    compressor.start();
+    flywheelMotor1.set(-.3);
+    // flywheelMotor2.set(.3);
+  }
+  @Override
+  public void testPeriodic() { 
+    drive.Run(test, true);
+  }
+
+  public void colorWheelRun() {
     gameData = DriverStation.getInstance().getGameSpecificMessage();
     if(gameData.length() > 0) {
       switch (gameData.charAt(0)) {
@@ -128,25 +150,7 @@ public class Robot extends TimedRobot {
           //This is corrupt data
           break;
       }
-    } else {
-      //Code for no data received yet
     }
-    colorwheel.Main();
-
-    boolean xButton = player1.getRawButton(3);
-    boolean yButton = player1.getRawButton(4);
-    
-    // turret.run(false, xButton, yButton, false);
-    // flywheel.run(true);
-    climber.run();
-    drive.Run(test, true);
-    // colorwheel.run(true);
-    compressor.start();
-  }
-
-  @Override
-  public void testPeriodic() { 
-    drive.Run(test, true);
   }
 
   //Fetch Buttons
