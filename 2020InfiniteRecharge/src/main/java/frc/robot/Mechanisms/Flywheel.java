@@ -39,7 +39,7 @@ public class Flywheel {
     private final double gearRatio = 1;// ratio from encoder to flywheel
     private CANSparkMax flywheelMotor1;
     private CANSparkMax flywheelMotor2;
-    // private CANEncoder flywheelEncoder1;
+    private CANEncoder flywheelEncoder1;
     // private CANEncoder flywheelEncoder2;
     private Joystick player2;
 
@@ -109,7 +109,7 @@ public class Flywheel {
             }*/
             if(run) {
 
-                if(player2.getRawButton(1)) {
+                if(player2.getRawButton(7)) {
                     flywheelMotor1.set(-0.6f);
                     flywheelMotor2.set(.6f);
                 } else {

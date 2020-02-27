@@ -17,9 +17,9 @@ public class Schwingster {
     private long lastTimeButtonUpPressed = currentTime;
     private boolean startedUp = false;
     private Joystick player2;
-    private VictorSPX climbTalon1;
+    private TalonSRX climbTalon1;
     private Solenoid adjustingPiston;
-    public Schwingster(Joystick player2, VictorSPX climbTalon1, Solenoid adjustingPiston) {
+    public Schwingster(Joystick player2, TalonSRX climbTalon1, Solenoid adjustingPiston) {
         this.player2 = player2;
         this.climbTalon1 = climbTalon1;
         this.adjustingPiston = adjustingPiston;

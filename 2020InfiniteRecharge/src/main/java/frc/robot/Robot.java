@@ -20,20 +20,19 @@ import frc.robot.Mechanisms.*;
 
 public class Robot extends TimedRobot {
   
-  // private final VictorSPX turretMotor;
-  // private final TalonSRX hoodMotor;
   private final CANSparkMax flywheelMotor1;
   private final CANSparkMax flywheelMotor2;
   private final Compressor compressor;
-  // private Flywheel flywheel;
-  // private Turret turret;
-  private VictorSPX climbTalon1;
+  private Flywheel flywheel;
+   private TalonSRX climbTalon1;
   private VictorSPX colorwheelTalon;
   private Solenoid adjustingPiston;
   private Solenoid colorwheelPiston;
+  private VictorSPX hopperMotor1;
+  private VictorSPX hopperMotor2;
   private Schwingster climber;
   
-  //private Drive drivecontrol;
+  // private Drive drivecontrol;
   private ColorWheel colorwheel;
   
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
@@ -55,18 +54,18 @@ public class Robot extends TimedRobot {
   private final CANSparkMax leftSlave2;
   
   public Robot() {
-    // turretMotor = new VictorSPX(10);
-    // hoodMotor = new TalonSRX(8);
+
     flywheelMotor1 = new CANSparkMax(7, MotorType.kBrushless);
-    flywheelMotor2 = new CANSparkMax(9, MotorType.kBrushless);
+    flywheelMotor2 = new CANSparkMax(8, MotorType.kBrushless);
     compressor = new Compressor();
     adjustingPiston = new Solenoid(4);
     colorwheelPiston = new Solenoid(3);
 
-    climbTalon1 = new VictorSPX(10);
-    colorwheelTalon = new VictorSPX(3);
-  
-    
+    hopperMotor1 = new VictorSPX(13);
+    hopperMotor2 = new VictorSPX(12);
+    climbTalon1 = new TalonSRX(10);
+    colorwheelTalon = new VictorSPX(11);
+      
     hardware = new DriveHardware();																																																																																																					
     player1 = new Joystick(0);
     player2 = new Joystick(1);
@@ -74,8 +73,8 @@ public class Robot extends TimedRobot {
 
     test = false;
     
-    // turret = new Turret(turretMotor, hoodMotor);
-    // flywheel = new Flywheel(flywheelMotor1, flywheelMotor2, player1);
+    
+    flywheel = new Flywheel(flywheelMotor1, flywheelMotor2, player1);
     climber = new Schwingster(player2, climbTalon1, adjustingPiston);
     colorwheel = new ColorWheel(colorwheelTalon, m_colorSensor, player2, colorwheelPiston);
 
@@ -115,15 +114,16 @@ public class Robot extends TimedRobot {
 
 
   public void teleopPeriodic() {
-    // turret.run(false, xButton, yButton, false);
-    // flywheel.run(true);
+    flywheel.run(false);
     climber.run();
-    //drive.Run(test, true);
-   //colorWheelRun();
-   // colorwheel.Main();
+    hopperMotor1.set(ControlMode.PercentOutput, .5);
+    // hopperMotor2.set(ControlMode.PercentOutput, 0.5);
+    drive.Run(test, true);
+    colorWheelRun();
+    colorwheel.Main();
     compressor.start();
-    flywheelMotor1.set(-.3);
-    // flywheelMotor2.set(.3);
+    // flywheelMotor1.set(.7);
+    // flywheelMotor2.set(-.7);
   }
   @Override
   public void testPeriodic() { 
