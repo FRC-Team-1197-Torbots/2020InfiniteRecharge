@@ -7,29 +7,26 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.I2C;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import com.revrobotics.ColorSensorV3;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.Drive.*;
 import frc.robot.Mechanisms.*;
 
 public class Robot extends TimedRobot {
   
-  private final CANSparkMax flywheelMotor1;
-  private final CANSparkMax flywheelMotor2;
+  private TorBalls torBalls;
+  private VictorSPX hopperMainMotor;
+  private VictorSPX hopperShooterMotor;
+  private VictorSPX intakeMotor;
+  private Solenoid intakePiston;
   private final Compressor compressor;
-  private Flywheel flywheel;
    private TalonSRX climbTalon1;
   private VictorSPX colorwheelTalon;
   private Solenoid adjustingPiston;
   private Solenoid colorwheelPiston;
-  private VictorSPX hopperMotor1;
-  private VictorSPX hopperMotor2;
   private Schwingster climber;
   
   // private Drive drivecontrol;
@@ -45,24 +42,17 @@ public class Robot extends TimedRobot {
 
   public boolean test;
   private String gameData;
-
-  private final CANSparkMax rightMaster;
-	private final CANSparkMax rightSlave1;
-	private final CANSparkMax rightSlave2;
-	private final CANSparkMax leftMaster;
-	private final CANSparkMax leftSlave1;
-  private final CANSparkMax leftSlave2;
   
   public Robot() {
 
-    flywheelMotor1 = new CANSparkMax(7, MotorType.kBrushless);
-    flywheelMotor2 = new CANSparkMax(8, MotorType.kBrushless);
+    // flywheelMotor1 = new CANSparkMax(7, MotorType.kBrushless);
+    // otherFlywheelMotor = new CANSparkMax(8, MotorType.kBrushless);
     compressor = new Compressor();
     adjustingPiston = new Solenoid(4);
     colorwheelPiston = new Solenoid(3);
 
-    hopperMotor1 = new VictorSPX(13);
-    hopperMotor2 = new VictorSPX(12);
+    // hopperMotor1 = new VictorSPX(13);
+    // hopperMotor2 = new VictorSPX(12);
     climbTalon1 = new TalonSRX(10);
     colorwheelTalon = new VictorSPX(11);
       
@@ -73,17 +63,14 @@ public class Robot extends TimedRobot {
 
     test = false;
     
-    
-    flywheel = new Flywheel(flywheelMotor1, flywheelMotor2, player1);
+    hopperMainMotor = new VictorSPX(13);
+    hopperShooterMotor = new VictorSPX(12);
+    intakeMotor = new VictorSPX(1);
+    intakePiston = new Solenoid(6);
+
+    torBalls = new TorBalls(player2, hopperMainMotor, hopperShooterMotor, intakeMotor, intakePiston);
     climber = new Schwingster(player2, climbTalon1, adjustingPiston);
     colorwheel = new ColorWheel(colorwheelTalon, m_colorSensor, player2, colorwheelPiston);
-
-    leftMaster = new CANSparkMax(4, MotorType.kBrushless);
-		leftSlave1 = new CANSparkMax(5, MotorType.kBrushless);
-		leftSlave2 = new CANSparkMax(6, MotorType.kBrushless);  
-		rightMaster = new CANSparkMax(1, MotorType.kBrushless);
-		rightSlave1 = new CANSparkMax(2, MotorType.kBrushless);
-		rightSlave2 = new CANSparkMax(3, MotorType.kBrushless);
   }
   
   @Override
@@ -100,6 +87,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     //1 = blue, 2 = green, 3 = red, 4 = yellow
     colorWheelRun();
+    torBalls.init();
     super.teleopInit();
   }
 
@@ -109,21 +97,13 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-
-
-
-
   public void teleopPeriodic() {
-    flywheel.run(false);
     climber.run();
-    hopperMotor1.set(ControlMode.PercentOutput, .5);
-    // hopperMotor2.set(ControlMode.PercentOutput, 0.5);
     drive.Run(test, true);
     colorWheelRun();
+    torBalls.run(true, true);
     colorwheel.Main();
     compressor.start();
-    // flywheelMotor1.set(.7);
-    // flywheelMotor2.set(-.7);
   }
   @Override
   public void testPeriodic() { 
