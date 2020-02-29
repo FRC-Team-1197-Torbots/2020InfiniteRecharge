@@ -86,21 +86,11 @@ public class DriveHardware {
 		resetGyro();
 	}
 
-	public void setMotorSpeeds(double rightSpeed, double leftSpeed) {
+	public void setMotorSpeeds(double leftSpeed, double rightSpeed) {
 		SmartDashboard.putNumber("left raw", getLeftEncoder());
 		SmartDashboard.putNumber("right raw", getRightEncoder());
-		if(leftOutputReversed) {
-			SetLeft(-leftSpeed);
-		}
-		else{
-			SetLeft(leftSpeed);
-		}
-		if(rightOutputReversed){
-			SetRight(-rightSpeed);
-		}
-		else{
-			SetRight(rightSpeed);
-		}
+		SetLeft(leftSpeed);
+		SetRight(rightSpeed);
 	}
 
 	// Setting the left master Talon's speed to the given parameter

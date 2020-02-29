@@ -7,10 +7,12 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.I2C;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorSensorV3;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.Drive.*;
 import frc.robot.Mechanisms.*;
@@ -18,6 +20,8 @@ import frc.robot.Mechanisms.*;
 public class Robot extends TimedRobot {
   
   private TorBalls torBalls;
+  private CANSparkMax flywheelMotor1;
+  private CANSparkMax otherFlywheelMotor;
   private VictorSPX hopperMainMotor;
   private VictorSPX hopperShooterMotor;
   private VictorSPX intakeMotor;
@@ -45,11 +49,11 @@ public class Robot extends TimedRobot {
   
   public Robot() {
 
-    // flywheelMotor1 = new CANSparkMax(7, MotorType.kBrushless);
-    // otherFlywheelMotor = new CANSparkMax(8, MotorType.kBrushless);
+    flywheelMotor1 = new CANSparkMax(7, MotorType.kBrushless);
+    otherFlywheelMotor = new CANSparkMax(8, MotorType.kBrushless);
     compressor = new Compressor();
-    adjustingPiston = new Solenoid(4);
-    colorwheelPiston = new Solenoid(3);
+    adjustingPiston = new Solenoid(3);
+    colorwheelPiston = new Solenoid(4);
 
     // hopperMotor1 = new VictorSPX(13);
     // hopperMotor2 = new VictorSPX(12);
@@ -63,10 +67,10 @@ public class Robot extends TimedRobot {
 
     test = false;
     
-    hopperMainMotor = new VictorSPX(13);
+    hopperMainMotor = new VictorSPX(3);
     hopperShooterMotor = new VictorSPX(12);
-    intakeMotor = new VictorSPX(1);
-    intakePiston = new Solenoid(6);
+    intakeMotor = new VictorSPX(2);
+    intakePiston = new Solenoid(2);
 
     torBalls = new TorBalls(player2, hopperMainMotor, hopperShooterMotor, intakeMotor, intakePiston);
     climber = new Schwingster(player2, climbTalon1, adjustingPiston);
@@ -104,7 +108,40 @@ public class Robot extends TimedRobot {
     torBalls.run(true, true);
     colorwheel.Main();
     compressor.start();
-  }
+    // if(player2.getRawButton(6)){
+    //   flywheelMotor1.set(.8);
+    //   otherFlywheelMotor.set(-0.8);
+    //   hopperShooterMotor.set(ControlMode.PercentOutput, 1);
+    // }
+    // else{
+    //   flywheelMotor1.set(0);
+    //   otherFlywheelMotor.set(0);
+    //   hopperShooterMotor.set(ControlMode.PercentOutput, 0);
+    // }
+    // if(Math.abs(player2.getRawAxis(3)) > 0.3){
+    //   hopperMainMotor.set(ControlMode.PercentOutput, -0.8);
+    //   intakeMotor.set(ControlMode.PercentOutput, 0.4);
+    // } else {
+    //   if(Math.abs(player2.getRawAxis(2)) > 0.3) {
+    //     intakeMotor.set(ControlMode.PercentOutput, 0.55);
+    //     intakePiston.set(true);
+    //   } else {
+    //     intakeMotor.set(ControlMode.PercentOutput, 0.0);
+    //     if(player2.getRawButton(7)) {
+    //       intakePiston.set(true);
+    //     } else {
+    //       intakePiston.set(false);
+    //     }
+    //   }
+    //   hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
+    // }
+    
+
+
+
+
+    }
+  
   @Override
   public void testPeriodic() { 
     drive.Run(test, true);

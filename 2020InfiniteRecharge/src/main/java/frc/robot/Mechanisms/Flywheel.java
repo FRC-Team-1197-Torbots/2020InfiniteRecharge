@@ -19,11 +19,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Flywheel {
     private final double targetHighSpeed = 8000;// rpm
     private final double targetLowSpeed = 5500;//rpm
-    private final double highSpeedConstant = 0.8;
-    private final double lowSpeedConstant = 0.4;
-    private final double adjustingConstant = 1.0 / 3;
-    private final double kP = 0.0;//.0005
-    private final double kI = 0.0;//.00075
+    private final double highSpeedConstant = 0.78;
+    private final double lowSpeedConstant = 0.2;
+    private final double adjustingConstant = -1.0 / 3;
+    private final double kP = 0.0007;//.0005
+    private final double kI = 0.00075;//.00075
     private final double kD = 0;
     private double currentError = 0;
 
@@ -71,7 +71,7 @@ public class Flywheel {
     }
 
     public void resetEncoder() {
-        flywheelEncoder1.setPosition(0.0);
+        flywheelEncoder1.setPosition(0.0);                                                                             
     }
     
 
@@ -83,13 +83,13 @@ public class Flywheel {
             || starting) {
             starting = false;
             lastCountedTime = currentTime;
-            if(player2.getRawButton(1)) {
+            if(player2.getRawButton(6)) {
                 targetSpeed = targetHighSpeed;
                 currentPosition = (adjustingConstant * flywheelEncoder1.getPosition()) / (gearRatio);
                 // currentPosition = (adjustingConstant * 1) / (gearRatio);
                 currentSpeed = findCurrentSpeed.estimate(currentPosition) * 60;//rpm
                 speedToSetMotor = pidRun(currentSpeed, targetSpeed) + highSpeedConstant;
-            } else {
+            } else {   
                 targetSpeed = targetLowSpeed;
                 currentPosition = (adjustingConstant * flywheelEncoder1.getPosition()) / (gearRatio);
                 // currentPosition = (adjustingConstant * 1) / (gearRatio);
@@ -110,7 +110,7 @@ public class Flywheel {
                     // flywheelMotor1.set(-0.5f);
                     // flywheelMotor2.set(0.5f);
                     flywheelMotor1.set(lowSpeedConstant * 1.0f);
-                    otherFlywheelMotor.set(lowSpeedConstant * 1.0f);
+                    otherFlywheelMotor.set(lowSpeedConstant * -1.0f);
                 }
             }
            

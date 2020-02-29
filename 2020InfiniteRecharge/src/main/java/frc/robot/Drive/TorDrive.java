@@ -70,6 +70,18 @@ public class TorDrive {//this is the upper layer of the drive
 		hardware.setMotorSpeeds(rightOutput, leftOutput);
 	}
 
+	public void hardRun(double speed1, double speed2) {//for auto
+		hardware.setMotorSpeeds(speed1, speed2);
+	}
+
+	public double getLeftEncoder() {
+		return hardware.getLeftEncoder();
+	}
+
+	public double getRightEncoder() {
+		return hardware.getRightEncoder();
+	}
+
 	public void Run(double speed) {
 		hardware.setMotorSpeeds(speed, speed);
 	}

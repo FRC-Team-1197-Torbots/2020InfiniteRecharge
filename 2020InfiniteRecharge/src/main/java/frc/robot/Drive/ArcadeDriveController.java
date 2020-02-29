@@ -70,7 +70,7 @@ public class ArcadeDriveController extends DriveController {
 
    //tunable
    private final double matrixLength = 3;
-   private final double AmatrixLength = 1;
+   private final double AmatrixLength = 2;
 
    //not tunable
    private final double weight = 1 / (matrixLength + 1);
@@ -110,13 +110,13 @@ public class ArcadeDriveController extends DriveController {
 
    @Override
    public void run() {
-    //    if(currentInit) {
-    //        for(double lambda:throttleArray)
-    //            lambda = 0;
-    //        for(double lambda:arcadeArray)
-    //            lambda = 0;
-    //        currentInit = false;
-    //    }
+       if(currentInit) {
+           for(double lambda:throttleArray)
+               lambda = 0;
+           for(double lambda:arcadeArray)
+               lambda = 0;
+           currentInit = false;
+       }
        currentTime = (long) (Timer.getFPGATimestamp() * 1000);
        // this handles it so that it will only tick in the time interval so that the derivatives and the integrals are correct
        if (((currentTime - startTime) - ((currentTime - startTime) % (dt * 1000))) > // has current time minus start time to see the relative time the trajectory has been going
@@ -126,7 +126,7 @@ public class ArcadeDriveController extends DriveController {
            starting = false;
            lastCountedTime = currentTime;
           
-           throttleAxis = player1.getRawAxis(1);
+           throttleAxis = -player1.getRawAxis(1);
            arcadeSteerAxis = player1.getRawAxis(0);
            if (Math.abs(arcadeSteerAxis) <= 0.15) {
                arcadeSteerAxis = 0.0;
@@ -165,23 +165,23 @@ public class ArcadeDriveController extends DriveController {
                NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
            }
 
-        //    throttleAxis *= weight;
-        //    for(double lambda:throttleArray) {
-        //        throttleAxis += weight * lambda;
-        //    }
-        //    for(int i = ((int)matrixLength - 1); i >= 1; i--) {
-        //        throttleArray[i] = throttleArray[i - 1];
-        //    }
-        //    throttleArray[0] = throttleAxis;
+           throttleAxis *= weight;
+           for(double lambda:throttleArray) {
+               throttleAxis += weight * lambda;
+           }
+           for(int i = ((int)matrixLength - 1); i >= 1; i--) {
+               throttleArray[i] = throttleArray[i - 1];
+           }
+           throttleArray[0] = throttleAxis;
 
-        //    arcadeSteerAxis *= Aweight;
-        //    for(double lambda:arcadeArray) {
-        //        arcadeSteerAxis += Aweight * lambda;
-        //    }
-        //    for(int c = ((int)AmatrixLength - 1); c >= 1; c--) {
-        //        arcadeArray[c] = arcadeArray[c - 1];
-        //    }
-        //    arcadeArray[0] = arcadeSteerAxis;
+           arcadeSteerAxis *= Aweight;
+           for(double lambda:arcadeArray) {
+               arcadeSteerAxis += Aweight * lambda;
+           }
+           for(int c = ((int)AmatrixLength - 1); c >= 1; c--) {
+               arcadeArray[c] = arcadeArray[c - 1];
+           }
+           arcadeArray[0] = arcadeSteerAxis;
            arcadeSteerAxis *= 0.5;
 
            if (throttleAxis > 0.0D) {

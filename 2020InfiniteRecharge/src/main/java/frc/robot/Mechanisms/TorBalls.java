@@ -21,12 +21,14 @@ public class TorBalls {
         this.hopperShooterMotor = hopperShooterMotor;
         this.intakeMotor = intakeMotor;
         this.intakePiston = intakePiston;
+        intake = new Intake(this.intakeMotor, this.intakePiston);
         flywheel = new Flywheel(player2);
     }
 
     public void init() {
         flywheel.resetEncoder();
     }
+    
     public void run(boolean flywheelRun, boolean hopperRun) {
         flywheel.run(flywheelRun);
         if(hopperRun ) {
@@ -35,14 +37,18 @@ public class TorBalls {
             } else {
                 hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
             }
-            if((Math.abs(player2.getRawAxis(3)) > 0.3) && flywheel.isFastEnough()) {//right trigger go
-                intake.runState(3);
-                hopperMainMotor.set(ControlMode.PercentOutput, 0.4);
+            if((Math.abs(player2.getRawAxis(3)) > 0.3)) {//right trigger go
+                intake.runState(2);
+                hopperMainMotor.set(ControlMode.PercentOutput, -0.8);
             } else {
                 if(Math.abs(player2.getRawAxis(2)) > 0.3) {
-                    intake.runState(2);
-                } else {
                     intake.runState(1);
+                } else {
+                    if(player2.getRawButton(7)) {
+                        intake.runState(3);
+                    } else {
+                        intake.runState(0);
+                    }
                 }
                 hopperShooterMotor.set(ControlMode.PercentOutput, 0.0);
             }
