@@ -51,7 +51,7 @@ public class ArcadeDriveController extends DriveController {
    // limelight PID
    // Stuff------------------------------>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-   private final double positionkP = 0.0; //-1.4
+   private final double positionkP = -1.4; //-1.4
    private final double positionkI = 0; //-0.002
    private final double positionkD = 0.0; //-0.035
    private final double positionTolerance = 3 * Math.PI / 180.0;// for thePID
@@ -96,14 +96,14 @@ public class ArcadeDriveController extends DriveController {
        limeLightPID.reset();
        findCurrentVelocity = new TorDerivative(dt);
        findCurrentVelocity.resetValue(0);
-       table = NetworkTableInstance.getDefault().getTable("limelight-ball");//bottom
+       table = NetworkTableInstance.getDefault().getTable("limelight");//bottom
        tx = table.getEntry("tx");
        ta = table.getEntry("ta");
    }
 
    @Override
    public void init() {
-       table = NetworkTableInstance.getDefault().getTable("limelight-ball");//bottom
+       table = NetworkTableInstance.getDefault().getTable("limelight");//bottom
        tx = table.getEntry("tx");
        ta = table.getEntry("ta");
    }
