@@ -17,14 +17,14 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Flywheel {
-    private final double targetHighSpeed = 8000;// rpm
+    private final double targetHighSpeed = 9000;// rpm
     private final double targetLowSpeed = 5500;//rpm
-    private final double highSpeedConstant = 0.8;
+    private final double highSpeedConstant = 0.85;
     private final double lowSpeedConstant = 0.0;
     private final double adjustingConstant = -1.0 / 3;
-    private final double kP = 0.0005;//.0005
-    private final double kI = 0.000;//.00075
-    private final double kD = 0;
+    private final double kP = 0.001;//.0005
+    private final double kI = 0.0005;//.00075
+    private final double kD = 0.0;
     private double currentError = 0;
 
     private TorDerivative pidDerivative;
@@ -75,7 +75,7 @@ public class Flywheel {
     }
     
 
-    public void run(boolean run) {
+    public void run(boolean run, boolean forceOn) {
         currentTime = (long) (Timer.getFPGATimestamp() * 1000);
         if (((currentTime - startTime) - ((currentTime - startTime) % (dt * 1000))) > // has current time minus start time to see the relative time the trajectory has been going
             ((lastCountedTime - startTime) - ((lastCountedTime - startTime) % (dt * 1000))) // subtracts that mod dt times 1000 so that it is floored to
@@ -83,7 +83,7 @@ public class Flywheel {
             || starting) {
             starting = false;
             lastCountedTime = currentTime;
-            if(player2.getRawButton(6)) {
+            if(player2.getRawButton(6) || forceOn) {
                 targetSpeed = targetHighSpeed;
                 currentPosition = (adjustingConstant * flywheelEncoder1.getPosition()) / (gearRatio);
                 // currentPosition = (adjustingConstant * 1) / (gearRatio);
@@ -99,7 +99,7 @@ public class Flywheel {
             }
             if(run) {
 
-                if(player2.getRawButton(6)) {
+                if(player2.getRawButton(6) || forceOn) {
                     flywheelMotor1.set(speedToSetMotor * 1.0f);
                     otherFlywheelMotor.set(-speedToSetMotor * 1.0f);
                     // flywheelMotor1.set(0.8f);

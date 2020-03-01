@@ -14,6 +14,7 @@ public class TorBalls {
     private Intake intake;
     private VictorSPX hopperMainMotor;
     private VictorSPX hopperShooterMotor;
+
     public TorBalls(Joystick player2, VictorSPX hopperMainMotor, VictorSPX hopperShooterMotor,
         VictorSPX intakeMotor, Solenoid intakePiston) {
         this.player2 = player2;
@@ -30,8 +31,8 @@ public class TorBalls {
     }
     
     public void run(boolean flywheelRun, boolean hopperRun) {
-        flywheel.run(flywheelRun);
-        if(hopperRun ) {
+        flywheel.run(flywheelRun, false);
+        if(hopperRun) {
             if(player2.getRawButton(6)) {
                 hopperShooterMotor.set(ControlMode.PercentOutput, 0.95);
             } else {
@@ -53,6 +54,41 @@ public class TorBalls {
                 hopperShooterMotor.set(ControlMode.PercentOutput, 0.0);
             }
         } else {
+            hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
+            hopperShooterMotor.set(ControlMode.PercentOutput, 0.0);
+        }
+    }
+
+    public void autoRun(int state) {
+        /*we have different states
+        0. Idle
+        1. Shooter revving up
+        2. Shooter firing
+        3. intaking
+        */
+
+        if(state == 1) {//rev up
+            //rev up shooter
+            flywheel.run(true, true);
+            intake.runState(0);
+            hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
+            hopperShooterMotor.set(ControlMode.PercentOutput, 0.95);
+        } else if(state == 2) {//fire
+            //rev up shooter
+            flywheel.run(true, true);
+            intake.runState(2);
+            hopperMainMotor.set(ControlMode.PercentOutput, -0.8);
+            hopperShooterMotor.set(ControlMode.PercentOutput, 0.95);
+        } else if(state == 3) {//intake
+            //shooter off
+            flywheel.run(true, false);
+            intake.runState(1);
+            hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
+            hopperShooterMotor.set(ControlMode.PercentOutput, 0.0);
+        } else {//idle
+            //shooter off
+            flywheel.run(true, false);
+            intake.runState(0);
             hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
             hopperShooterMotor.set(ControlMode.PercentOutput, 0.0);
         }

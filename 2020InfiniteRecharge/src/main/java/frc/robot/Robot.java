@@ -108,38 +108,6 @@ public class Robot extends TimedRobot {
     torBalls.run(true, true);
     colorwheel.Main();
     compressor.start();
-    // if(player2.getRawButton(6)){
-    //   flywheelMotor1.set(.8);
-    //   otherFlywheelMotor.set(-0.8);
-    //   hopperShooterMotor.set(ControlMode.PercentOutput, 1);
-    // }
-    // else{
-    //   flywheelMotor1.set(0);
-    //   otherFlywheelMotor.set(0);
-    //   hopperShooterMotor.set(ControlMode.PercentOutput, 0);
-    // }
-    // if(Math.abs(player2.getRawAxis(3)) > 0.3){
-    //   hopperMainMotor.set(ControlMode.PercentOutput, -0.8);
-    //   intakeMotor.set(ControlMode.PercentOutput, 0.4);
-    // } else {
-    //   if(Math.abs(player2.getRawAxis(2)) > 0.3) {
-    //     intakeMotor.set(ControlMode.PercentOutput, 0.55);
-    //     intakePiston.set(true);
-    //   } else {
-    //     intakeMotor.set(ControlMode.PercentOutput, 0.0);
-    //     if(player2.getRawButton(7)) {
-    //       intakePiston.set(true);
-    //     } else {
-    //       intakePiston.set(false);
-    //     }
-    //   }
-    //   hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
-    // }
-    
-
-
-
-
     }
   
   @Override
@@ -149,19 +117,25 @@ public class Robot extends TimedRobot {
 
   public void colorWheelRun() {
     gameData = DriverStation.getInstance().getGameSpecificMessage();
+    //we have to add 2 to the number since we have to spin to the opposite color
+    //since the colorwheel is sense from the middle
     if(gameData.length() > 0) {
       switch (gameData.charAt(0)) {
         case 'B' :
-          colorwheel.setColor(1);
-          break;
-        case 'G' :
-          colorwheel.setColor(2);
-          break;
-        case 'R' :
+          // colorwheel.setColor(1);
           colorwheel.setColor(3);
           break;
-        case 'Y' :
+        case 'G' :
+          // colorwheel.setColor(2);
           colorwheel.setColor(4);
+          break;
+        case 'R' :
+          // colorwheel.setColor(3);
+          colorwheel.setColor(1);
+          break;
+        case 'Y' :
+          // colorwheel.setColor(4);
+          colorwheel.setColor(2);
           break;
         default :
           //This is corrupt data
