@@ -16,9 +16,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.Drive.*;
 import frc.robot.Mechanisms.*;
+import frc.robot.Autonomous.*;
 
 public class Robot extends TimedRobot {
-  
+  private Auto Auto;
+
   private TorBalls torBalls;
   private CANSparkMax flywheelMotor1;
   private CANSparkMax otherFlywheelMotor;
@@ -75,6 +77,8 @@ public class Robot extends TimedRobot {
     torBalls = new TorBalls(player2, hopperMainMotor, hopperShooterMotor, intakeMotor, intakePiston);
     climber = new Schwingster(player2, climbTalon1, adjustingPiston);
     colorwheel = new ColorWheel(colorwheelTalon, m_colorSensor, player2, colorwheelPiston);
+
+    Auto = new Auto(torBalls, drive, player1);
   }
   
   @Override
@@ -85,7 +89,9 @@ public class Robot extends TimedRobot {
   }
   
   @Override
-  public void autonomousInit() { }
+  public void autonomousInit() {
+    Auto.setNumber(1);
+  }
 
   @Override
   public void teleopInit() {
@@ -97,7 +103,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() { 
-    drive.Run(test, true);
+    // drive.Run(test, true);
+    Auto.testRun();
   }
 
   @Override

@@ -9,6 +9,8 @@ public class Auto {
     private TorBalls torBalls;
     private Joystick player1;
 
+    private Auto1 Auto1;
+
     private linearTrajectory linearRun;
     private pivotTrajectory pivotRun;
     
@@ -25,6 +27,8 @@ public class Auto {
 
         linearRun = new linearTrajectory(torDrive, 1.0, 100.0);//want to tune it with infinite time
         pivotRun = new pivotTrajectory(torDrive, 90.0, 100.0);
+
+        Auto1 = new Auto1(torBalls, torDrive);
     }
 
     public void testRun() {
@@ -62,7 +66,7 @@ public class Auto {
 
     public void run() {
         if(autoToRun == 1) {
-            
+            Auto1.run();
         }
     }
 }
