@@ -23,7 +23,7 @@ public class Auto1 {
         this.torBalls = torBalls;
         linear1 = new linearTrajectory(torDrive, -2.0, 5.0);
         pivot1 = new pivotTrajectory(torDrive, -10.0, 2.0);
-        limeLight1 = new limelightLineUp(torDrive, 2.0);
+        limeLight1 = new limelightLineUp(torDrive, 0.0);
     }
 
     public void run() {
