@@ -16,9 +16,9 @@ public class limelightLineUp {
 	private final double kF = 0.005;
     
     //PID For rotation
-	private final double rkP = 0.0;//.035
-	private final double rkD = 0.0;//0.00087
-	private final double rkI = 0.0;//0.0087
+	private final double rkP = 0.0;//2
+	private final double rkD = 0.0;//-0.05
+	private final double rkI = 0.0;//0.5
 	
 	//tolerances
 	private final double angleTolerance = 2.75 * (Math.PI / 180.0);//radians
