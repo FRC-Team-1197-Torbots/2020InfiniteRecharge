@@ -82,6 +82,14 @@ public class TorDrive {//this is the upper layer of the drive
 		return hardware.getPosition();
 	}
 
+	public double getLeftEncoder() {
+		return hardware.getLeftEncoder();
+	}
+
+	public double getRightEncoder() {
+		return hardware.getRightEncoder();
+	}
+
 	public void init() {
 		ADC.init();
 		TDC.init();

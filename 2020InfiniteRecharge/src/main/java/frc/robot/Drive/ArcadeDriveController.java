@@ -207,6 +207,7 @@ public class ArcadeDriveController extends DriveController {
                rightMotorSpeed = 0;
                leftMotorSpeed = 0;
            }
+           
            setRightOutput(rightMotorSpeed);
            setLeftOutput(leftMotorSpeed);
        }

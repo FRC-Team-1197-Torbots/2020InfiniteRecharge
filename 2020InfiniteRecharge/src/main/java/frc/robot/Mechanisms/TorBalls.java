@@ -5,6 +5,9 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 
 public class TorBalls {
     private Flywheel flywheel;
@@ -13,9 +16,9 @@ public class TorBalls {
     private Solenoid intakePiston;
     private Intake intake;
     private VictorSPX hopperMainMotor;
-    private VictorSPX hopperShooterMotor;
+    private CANSparkMax hopperShooterMotor;
 
-    public TorBalls(Joystick player2, VictorSPX hopperMainMotor, VictorSPX hopperShooterMotor,
+    public TorBalls(Joystick player2, VictorSPX hopperMainMotor, CANSparkMax hopperShooterMotor,
         VictorSPX intakeMotor, Solenoid intakePiston) {
         this.player2 = player2;
         this.hopperMainMotor = hopperMainMotor;
@@ -34,11 +37,11 @@ public class TorBalls {
         flywheel.run(flywheelRun, false);
         if(hopperRun) {
             if(player2.getRawButton(6)) {
-                hopperShooterMotor.set(ControlMode.PercentOutput, 0.95);
+                hopperShooterMotor.set(-0.95);
             } else {
-                hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
+                hopperShooterMotor.set(0.0);
             }
-            if((Math.abs(player2.getRawAxis(3)) > 0.3)) {//right trigger go
+            if((Math.abs(player2.getRawAxis(3)) > 0.3) && flywheel.isFastEnough()) {//right trigger go
                 intake.runState(2);
                 hopperMainMotor.set(ControlMode.PercentOutput, -0.8);
             } else {
@@ -51,11 +54,11 @@ public class TorBalls {
                         intake.runState(0);
                     }
                 }
-                hopperShooterMotor.set(ControlMode.PercentOutput, 0.0);
+                hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
             }
         } else {
             hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
-            hopperShooterMotor.set(ControlMode.PercentOutput, 0.0);
+            hopperShooterMotor.set(0.0);
         }
     }
 
@@ -72,25 +75,27 @@ public class TorBalls {
             flywheel.run(true, true);
             intake.runState(0);
             hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
-            hopperShooterMotor.set(ControlMode.PercentOutput, 0.95);
+            hopperShooterMotor.set(-0.95);
         } else if(state == 2) {//fire
             //rev up shooter
             flywheel.run(true, true);
-            intake.runState(2);
-            hopperMainMotor.set(ControlMode.PercentOutput, -0.8);
-            hopperShooterMotor.set(ControlMode.PercentOutput, 0.95);
+            if(flywheel.isFastEnough()) {
+                intake.runState(2);
+                hopperMainMotor.set(ControlMode.PercentOutput, -0.8);
+            }
+            hopperShooterMotor.set(-0.95);
         } else if(state == 3) {//intake
             //shooter off
             flywheel.run(true, false);
             intake.runState(1);
             hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
-            hopperShooterMotor.set(ControlMode.PercentOutput, 0.0);
+            hopperShooterMotor.set(0.0);
         } else {//idle
             //shooter off
             flywheel.run(true, false);
             intake.runState(0);
             hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
-            hopperShooterMotor.set(ControlMode.PercentOutput, 0.0);
+            hopperShooterMotor.set(0.0);
         }
     }
 }

@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Drive.*;
 import frc.robot.Mechanisms.*;
@@ -22,10 +23,8 @@ public class Robot extends TimedRobot {
   private Auto Auto;
 
   private TorBalls torBalls;
-  private CANSparkMax flywheelMotor1;
-  private CANSparkMax otherFlywheelMotor;
   private VictorSPX hopperMainMotor;
-  private VictorSPX hopperShooterMotor;
+  private CANSparkMax hopperShooterMotor;
   private VictorSPX intakeMotor;
   private Solenoid intakePiston;
   private final Compressor compressor;
@@ -50,9 +49,6 @@ public class Robot extends TimedRobot {
   private String gameData;
   
   public Robot() {
-
-    flywheelMotor1 = new CANSparkMax(7, MotorType.kBrushless);
-    otherFlywheelMotor = new CANSparkMax(8, MotorType.kBrushless);
     compressor = new Compressor();
     adjustingPiston = new Solenoid(3);
     colorwheelPiston = new Solenoid(4);
@@ -69,9 +65,9 @@ public class Robot extends TimedRobot {
 
     test = false;
     
-    hopperMainMotor = new VictorSPX(3);
-    hopperShooterMotor = new VictorSPX(12);
-    intakeMotor = new VictorSPX(2);
+    hopperMainMotor = new VictorSPX(12);
+    hopperShooterMotor = new CANSparkMax(9, MotorType.kBrushless);
+    intakeMotor = new VictorSPX(3);
     intakePiston = new Solenoid(2);
 
     torBalls = new TorBalls(player2, hopperMainMotor, hopperShooterMotor, intakeMotor, intakePiston);
@@ -115,7 +111,12 @@ public class Robot extends TimedRobot {
     torBalls.run(true, true);
     colorwheel.Main();
     compressor.start();
-    }
+    
+    SmartDashboard.putNumber("current position:", drive.getPosition());
+    SmartDashboard.putNumber("left encoder:", drive.getLeftEncoder());
+    SmartDashboard.putNumber("right encoder:", drive.getRightEncoder());
+    SmartDashboard.putNumber("current heading degrees:", (drive.getHeading() * 180 / Math.PI));
+  }
   
   @Override
   public void testPeriodic() { 
