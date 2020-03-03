@@ -44,10 +44,10 @@ public class DriveHardware {
 	//need to be in the same gear
 	//also need to tune the values in TorTrajectory, to use linear and pivot trajectories
 	//also need to tune global motion limits in TorTrajectoryLib (don't need to tune TorTrajectory in TorTrajectoryLib since it is not building any linear or pivots)
-	private final double encoderTicksPerMeter = 924.0; //push the robot forward one meter and take the average of the two encoder distances
-	private final double absoluteMaxVelocity = 0.0; //use encoder ticks per meter, and using the robot, set it to the max speed on both wheels and see how many encoder ticks it goes forward
-	//then using the encoder ticks per meter calculation, calculate its absolute Max Velocity [Units: Meters/Second]
-	private final double absoluteMaxAcceleration = 0.0;//[Units:(delta meters/seconds)/seconds
+	private final double encoderTicksPerFoot = 4819; //push the robot forward one foot and take the average of the two encoder distances
+	private final double absoluteMaxVelocity = 0.0; //use encoder ticks per foot, and using the robot, set it to the max speed on both wheels and see how many encoder ticks it goes forward
+	//then using the encoder ticks per foot calculation, calculate its absolute Max Velocity [Units: Feet/Second]
+	private final double absoluteMaxAcceleration = 0.0;//[Units:(delta feet/seconds)/seconds
 	//just see how many seconds it takes to go from 0 to 100% speed and divide the absolute max velocity by that number of seconds
 	private final double absoluteMaxOmega = 0.0;//use the gyro and set one motor to 100% and the other to -100% [Units: Radians/Second]
 	private final double absoluteMaxAlpha = 0.0;//[Units:(delta radians/seconds)/seconds]
@@ -130,9 +130,9 @@ public class DriveHardware {
 		return (rightEncoder.getRaw() + leftEncoder.getRaw()) * 0.5;
 	}
 
-	// Getting the position from both encoders in meters
+	// Getting the position from both encoders in feet
 	public double getPosition() {
-		return ((rightEncoder.getRaw() + leftEncoder.getRaw()) * 0.5) / encoderTicksPerMeter; // [meters]
+		return ((rightEncoder.getRaw() + leftEncoder.getRaw()) * 0.5) / encoderTicksPerFoot; // [feet]
 	}
 
 	// Getting the angle in radians from the spartan board

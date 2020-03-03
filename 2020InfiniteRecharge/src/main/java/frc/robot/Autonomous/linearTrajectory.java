@@ -11,12 +11,12 @@ public class linearTrajectory {
     private boolean isFinished = false;
     
     //PID for translation
-	private final double tkP = 0.0;//0.5
-	private final double tkD = 0.0;//.001
-    private final double tkI = 0.0;//.0003
+	private final double tkP = 0.18;//0.5
+	private final double tkD = 0.000;//.001
+    private final double tkI = 0.0006;//.0003
     
     //PID For rotation
-	private final double rkP = 0.0;//0.5
+	private final double rkP = -0.5;//0.5
 	private final double rkD = 0.0;//0.0
 	private final double rkI = 0.0;//0.01
 	private final double kF = 0.005;
@@ -24,9 +24,9 @@ public class linearTrajectory {
 	private final int errorFob = 1;//forwards or backwards
 	
 	//tolerances
-	private final double positionTolerance = 0.015;//units: meters
-	private final double velocityTolerance = 0.015;//units: meters per second
-	private final double headingTolerance = 2.5 * (Math.PI / 180.0);//units: radians
+	private final double positionTolerance = 0.05;//units: feet 0.015
+	private final double velocityTolerance = 0.05;//units: feet per second 0.015
+	private final double headingTolerance = 1.5 * (Math.PI / 180.0);//units: radians 2.5 degrees
 	
 	private double currentVelocity;
 	

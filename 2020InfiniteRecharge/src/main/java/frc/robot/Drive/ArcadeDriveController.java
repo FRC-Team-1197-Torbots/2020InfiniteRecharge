@@ -53,7 +53,7 @@ public class ArcadeDriveController extends DriveController {
 
    private final double positionkP = -2; //-1.4
    private final double positionkI = 0; //-0.002
-   private final double positionkD = 0.0; //-0.035
+   private final double positionkD = -0.035; //-0.035
    private final double positionTolerance = 3 * Math.PI / 180.0;// for thePID
    private final double velocitykP = 0.0;// velocity stuff probably not needed at all and should keep 0
    private final double velocitykI = 0.0;

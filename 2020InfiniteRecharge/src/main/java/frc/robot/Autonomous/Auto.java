@@ -28,7 +28,7 @@ public class Auto {
         this.player1 = player1;
         this.torDrive = torDrive;
 
-        linearRun = new linearTrajectory(torDrive, 1.0, 100.0);//want to tune it with infinite time
+        linearRun = new linearTrajectory(torDrive, 3.0, 100.0);//want to tune it with infinite time
         pivotRun = new pivotTrajectory(torDrive, 90.0, 100.0);
 
         Auto1 = new Auto1(torBalls, torDrive);
@@ -39,6 +39,9 @@ public class Auto {
         SmartDashboard.putNumber("left encoder:", torDrive.getLeftEncoder());
         SmartDashboard.putNumber("right encoder:", torDrive.getRightEncoder());
         SmartDashboard.putNumber("current heading degrees:", (torDrive.getHeading() * 180 / Math.PI));
+
+        SmartDashboard.putBoolean("linear is done", linearRun.isDone());
+        SmartDashboard.putBoolean("pivot is done", pivotRun.isDone());
 
         torBalls.autoRun(0);
         if(testAutoStateMachine == testAuto.IDLE) {

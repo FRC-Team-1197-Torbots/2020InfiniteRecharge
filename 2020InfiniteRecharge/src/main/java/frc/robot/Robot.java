@@ -53,10 +53,8 @@ public class Robot extends TimedRobot {
     adjustingPiston = new Solenoid(3);
     colorwheelPiston = new Solenoid(4);
 
-    // hopperMotor1 = new VictorSPX(13);
-    // hopperMotor2 = new VictorSPX(12);
     climbTalon1 = new TalonSRX(10);
-    colorwheelTalon = new VictorSPX(11);
+    colorwheelTalon = new VictorSPX(13);
       
     hardware = new DriveHardware();																																																																																																					
     player1 = new Joystick(0);
@@ -100,12 +98,13 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() { 
     // drive.Run(test, true);
-    Auto.testRun();
+    // Auto.testRun();
   }
 
   @Override
   public void teleopPeriodic() {
     climber.run();
+    // Auto.testRun();
     drive.Run(test, true);
     colorWheelRun();
     torBalls.run(true, true);
