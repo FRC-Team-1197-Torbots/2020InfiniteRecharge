@@ -69,8 +69,8 @@ public class ArcadeDriveController extends DriveController {
    //this is for the curve drive
 
    //tunable
-   private final double matrixLength = 3;
-   private final double AmatrixLength = 2;
+   private final double matrixLength = 2;
+   private final double AmatrixLength = 1;
 
    //not tunable
    private final double weight = 1 / (matrixLength + 1);
@@ -142,9 +142,9 @@ public class ArcadeDriveController extends DriveController {
                arcadeSteerAxis *= 0.25;
            }
            // get all the values from the limelight
-           SmartDashboard.putNumber("tx:", tx.getDouble(0.0));
-           x = tx.getDouble(0.0);
-               area = ta.getDouble(0.0);
+           SmartDashboard.putNumber("tx:", tx.getDouble(0.0) - 1.5);
+           x = tx.getDouble(0.0) - 1.5;
+           area = ta.getDouble(0.0);
 
            // convert tShe angles into radians
            x *= ((Math.PI) / 180.0);

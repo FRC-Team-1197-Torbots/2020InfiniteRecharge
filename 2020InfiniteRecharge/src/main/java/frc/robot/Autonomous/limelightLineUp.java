@@ -89,7 +89,7 @@ public class limelightLineUp {
 			break;
 		case GO:
 			NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
-            angleError = (tx.getDouble(0.0) - 1.5) * Math.PI / 180.0;
+            angleError = (tx.getDouble(0.0) - 1.75) * Math.PI / 180.0;
             
 			//we need to make sure control system is efficient so the angle error ranges from -pi to pi
 			if(angleError > Math.PI) {
