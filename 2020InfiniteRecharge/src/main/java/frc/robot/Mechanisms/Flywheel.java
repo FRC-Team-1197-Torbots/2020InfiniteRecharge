@@ -17,13 +17,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Flywheel {
-    private final double targetHighSpeed = 9000;// rpm
+    private final double targetHighSpeed = 11000;// rpm
     private final double targetLowSpeed = 5500;//rpm
     private final double highSpeedConstant = 0.85;
     private final double lowSpeedConstant = 0.0;
     private final double adjustingConstant = -1.0 / 3;
-    private final double kP = 0.001;//.0005
-    private final double kI = 0.0005;//.00075
+    private final double kP = 0.0002;//.0005
+    private final double kI = 0.00002;//.00075
     private final double kD = 0.0;
     private double currentError = 0;
 

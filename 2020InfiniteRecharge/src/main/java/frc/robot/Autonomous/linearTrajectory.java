@@ -8,24 +8,26 @@ public class linearTrajectory {
 	private TorDrive drive;
 	private double thisdistance;
 	private double currentDistance;
-    private boolean isFinished = false;
+	private boolean isFinished = false;
+	
+	private final double maxSpeed = 0.7;
     
     //PID for translation
-	private final double tkP = 0.18;//0.5
-	private final double tkD = 0.000;//.001
-    private final double tkI = 0.0006;//.0003
+	private final double tkP = 0.2;//0.5
+	private final double tkD = 0.00002;//.001
+    private final double tkI = 0.05;//.0003
     
     //PID For rotation
-	private final double rkP = -0.5;//0.5
+	private final double rkP = -0.3;//0.5
 	private final double rkD = 0.0;//0.0
-	private final double rkI = 0.0;//0.01
+	private final double rkI = 0.001;//0.01
 	private final double kF = 0.005;
 	private final int lor = 1;
 	private final int errorFob = 1;//forwards or backwards
 	
 	//tolerances
 	private final double positionTolerance = 0.05;//units: feet 0.015
-	private final double velocityTolerance = 0.05;//units: feet per second 0.015
+	private final double velocityTolerance = 0.1;//units: feet per second 0.015
 	private final double headingTolerance = 1.5 * (Math.PI / 180.0);//units: radians 2.5 degrees
 	
 	private double currentVelocity;
@@ -119,7 +121,7 @@ public class linearTrajectory {
 			error = (thisdistance) - (currentDistance - startDistance);//error always positive if approaching
 			error *= errorFob;
 			vI += error;
-			if(Math.abs(error) <= positionTolerance) {
+			if(Math.abs(error) <= positionTolerance * 0.5) {
 				vI = 0;
 			}
 			if(vI > (0.7 / (tkI * kF))) {
@@ -152,6 +154,12 @@ public class linearTrajectory {
 			omegaD = (angleDerivative.estimate(angleError)) * rkD;
 			omega = omegaP + omegaD + (omegaI * rkI * kF);
 			omega *= lor;
+
+			if(velocity > maxSpeed) {
+				velocity = maxSpeed;
+			} else if(velocity < -maxSpeed) {
+				velocity = -maxSpeed;
+			}
 			
 			drive.setMotorSpeeds(velocity + omega, velocity - omega);//right, left	
 				if((Math.abs(error) <= positionTolerance

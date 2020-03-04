@@ -13,15 +13,16 @@ public class limelightLineUp {
 	private boolean isFinished = false;
 	private double lasttime;
 	private double currentTime;
+	private double minimalTime;
 	private final double kF = 0.005;
     
     //PID For rotation
-	private final double rkP = 0.0;//2
-	private final double rkD = 0.0;//-0.05
-	private final double rkI = 0.0;//0.5
+	private final double rkP = -1.7;//1
+	private final double rkD = 0.0;//-0.009
+	private final double rkI = 0.05;//0.02
 	
 	//tolerances
-	private final double angleTolerance = 2.75 * (Math.PI / 180.0);//radians
+	private final double angleTolerance = 1.0 * (Math.PI / 180.0);//radians
 	private final double omegaTolerance = 1.5 * (Math.PI / 180.0);//radians per second
 	
 	private double omegaP;//turning proportional
@@ -49,8 +50,9 @@ public class limelightLineUp {
 	
 	public run runIt = run.IDLE;
 	
-	public limelightLineUp(TorDrive drive, double timeOutTime) {
+	public limelightLineUp(TorDrive drive, double minimalTime, double timeOutTime) {
 		this.drive = drive;
+		this.minimalTime = minimalTime;
 		this.timeOutTime = timeOutTime;
         derivative = new TorDerivative(kF);
          
@@ -65,6 +67,7 @@ public class limelightLineUp {
 	public void init() {
 		isFinished = false;
 		runIt = run.GO;
+		NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
         angleError = tx.getDouble(0.0) * Math.PI / 180.0;
         
 		//we need to make sure control system is efficient so the angle error ranges from -pi to pi
@@ -85,7 +88,8 @@ public class limelightLineUp {
 		case IDLE:
 			break;
 		case GO:
-            angleError = tx.getDouble(0.0) * Math.PI / 180.0;
+			NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
+            angleError = (tx.getDouble(0.0) - 1.5) * Math.PI / 180.0;
             
 			//we need to make sure control system is efficient so the angle error ranges from -pi to pi
 			if(angleError > Math.PI) {
@@ -121,13 +125,15 @@ public class limelightLineUp {
 			
 			drive.setMotorSpeeds(speed, -speed);
 				
-			if(((Math.abs(angleError) <= angleTolerance)
+			if((((Math.abs(angleError) <= angleTolerance)
 					&& (Math.abs(currentVelocity) < omegaTolerance))
 					
 					|| 
-					(currentTime - lasttime > timeOutTime)) {//timeout
+					(currentTime - lasttime > timeOutTime))//timeout
+					&& (currentTime - lasttime > minimalTime)) {
 				drive.setMotorSpeeds(0, 0);
 				isFinished = true;
+				NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
 				runIt = run.IDLE;
 			}
 			break;

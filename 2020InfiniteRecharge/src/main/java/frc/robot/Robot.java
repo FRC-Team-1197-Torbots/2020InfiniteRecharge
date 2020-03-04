@@ -44,9 +44,12 @@ public class Robot extends TimedRobot {
 	private TorDrive drive;
   private Joystick player1;
   private Joystick player2;
+  private Joystick autoBox;
 
   public boolean test;
   private String gameData;
+
+  private double autoNumber;
   
   public Robot() {
     compressor = new Compressor();
@@ -59,6 +62,7 @@ public class Robot extends TimedRobot {
     hardware = new DriveHardware();																																																																																																					
     player1 = new Joystick(0);
     player2 = new Joystick(1);
+    autoBox = new Joystick(2);
 		drive = new TorDrive(hardware, player1);
 
     test = false;
@@ -84,7 +88,12 @@ public class Robot extends TimedRobot {
   
   @Override
   public void autonomousInit() {
-    Auto.setNumber(1);
+    for(int i = 1; i<5; i++) {
+      if(autoBox.getRawButton(i)) {
+        autoNumber += Math.pow(2, i-1);
+      }
+    }
+    Auto.setNumber(autoNumber);
   }
 
   @Override
@@ -99,6 +108,7 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() { 
     // drive.Run(test, true);
     // Auto.testRun();
+    Auto.run();
   }
 
   @Override
@@ -118,8 +128,9 @@ public class Robot extends TimedRobot {
   }
   
   @Override
-  public void testPeriodic() { 
-    drive.Run(test, true);
+  public void testPeriodic() {
+    Auto.testRun(); 
+    // drive.Run(test, true);
   }
 
   public void colorWheelRun() {

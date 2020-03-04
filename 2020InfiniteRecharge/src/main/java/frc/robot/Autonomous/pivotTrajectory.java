@@ -14,21 +14,23 @@ public class pivotTrajectory {
 	private double currentTime;
 	private final double kF = 0.005;
 	
+	private final double maxSpeed = 0.7;
+
 	private double startAngle;
 	
 	//PID For rotation
-	private final double rkP = 0.0;//2
-	private final double rkD = 0.0;//-0.05
-	private final double rkI = 0.0;//0.5
+	private final double rkP = 1;//1
+	private final double rkD = -0.009;//-0.009
+	private final double rkI = 0.02;//0.02
 	
 	//tolerances
-	private final double angleTolerance = 2.75 * (Math.PI / 180.0);//radians
+	private final double angleTolerance = 1.5 * (Math.PI / 180.0);//radians
 	private final double omegaTolerance = 1.5 * (Math.PI / 180.0);//radians per second
 	
 	private double omegaP;//turning proportional
 	private double omegaD;//turning derivative
 	private double omegaI;
-	private final double lor = -1;
+	private final double lor = 1;
 	
 	private double angleError;
 	
@@ -114,6 +116,12 @@ public class pivotTrajectory {
 			
 			speed = omegaP + omegaD + (omegaI * rkI * kF);
 			speed *= lor;
+
+			if(speed > maxSpeed) {
+				speed = maxSpeed;
+			} else if(speed < -maxSpeed) {
+				speed = -maxSpeed;
+			}
 			
 			drive.setMotorSpeeds(speed, -speed);
 				
