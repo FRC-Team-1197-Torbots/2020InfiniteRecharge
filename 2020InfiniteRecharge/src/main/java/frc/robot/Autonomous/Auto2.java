@@ -76,7 +76,7 @@ public class Auto2 {
                 break;
             case Shoot:
                 torBalls.autoRun(2);
-                if(currentTime > startTime + 1.5) {
+                if(currentTime > startTime + 1.4) {
                     pivot2 = new pivotTrajectory(torDrive, 
                     ((-Math.PI - (torDrive.getHeading() - startAngle)) * (180 / Math.PI)), 2.0);
                     pivot2.init();

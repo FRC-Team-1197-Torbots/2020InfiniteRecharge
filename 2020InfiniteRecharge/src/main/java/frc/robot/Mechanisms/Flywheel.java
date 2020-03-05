@@ -25,7 +25,7 @@ public class Flywheel {
     private final double highSpeedConstant = 0.9;
     private final double lowSpeedConstant = 0.0;
     // private final double adjustingConstant = 1.0 / 3;
-    private final double kP = 0.0002;//.0002
+    private final double kP = 0.00035;//.0002
     private final double kI = 0.000005;//.000002
     private final double kD = 0.0;
     private double currentError = 0;
@@ -122,7 +122,7 @@ public class Flywheel {
     }
     
     public boolean isFastEnough() {
-        return currentSpeed > 0.95 * targetHighSpeed;
+        return currentSpeed > 0.9 * targetHighSpeed;
     }
 
     public double pidRun(double currentSpeed, double targetSpeed) {

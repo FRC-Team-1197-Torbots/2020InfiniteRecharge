@@ -43,7 +43,7 @@ public class TorBalls {
             }
             if((Math.abs(player2.getRawAxis(3)) > 0.3) && flywheel.isFastEnough()) {//right trigger go
                 intake.runState(2);
-                hopperMainMotor.set(ControlMode.PercentOutput, -0.8);
+                hopperMainMotor.set(ControlMode.PercentOutput, -1.0);
             } else {
                 if(Math.abs(player2.getRawAxis(2)) > 0.3) {
                     intake.runState(1);
@@ -81,7 +81,7 @@ public class TorBalls {
             flywheel.run(true, true);
             if(flywheel.isFastEnough()) {
                 intake.runState(2);
-                hopperMainMotor.set(ControlMode.PercentOutput, -0.8);
+                hopperMainMotor.set(ControlMode.PercentOutput, -1.0);
             }
             hopperShooterMotor.set(-0.95);
         } else if(state == 3) {//intake
@@ -96,7 +96,7 @@ public class TorBalls {
             flywheel.run(true, true);
             if(flywheel.isFastEnough()) {
                 intake.runState(2);
-                hopperMainMotor.set(ControlMode.PercentOutput, -0.7);
+                hopperMainMotor.set(ControlMode.PercentOutput, -1.0);
             }
             hopperShooterMotor.set(-0.95);
         } else {//idle
