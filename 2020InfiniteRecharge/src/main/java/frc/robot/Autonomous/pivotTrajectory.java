@@ -19,7 +19,7 @@ public class pivotTrajectory {
 	private double startAngle;
 	
 	//PID For rotation
-	private final double rkP = 1;//1
+	private final double rkP = 0.9;//1
 	private final double rkD = -0.009;//-0.009
 	private final double rkI = 0.02;//0.02
 	

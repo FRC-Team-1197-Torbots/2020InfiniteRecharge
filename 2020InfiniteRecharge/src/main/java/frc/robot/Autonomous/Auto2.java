@@ -9,7 +9,7 @@ import frc.robot.Drive.*;
 public class Auto2 {
     public static enum autoRun {
         INIT, Linear1, Pivot1, limeLightLineUp,
-        Shoot, Pivot2, Linear2, Pivot3, limeLightLineUp2, Shoot2, DONE;
+        Shoot, Pivot2, Linear2, Pivot3, Linear3, limeLightLineUp2, Shoot2, DONE;
         private autoRun() {}
     }
     
@@ -17,7 +17,7 @@ public class Auto2 {
     private TorDrive torDrive;
     private linearTrajectory linear1;
     private pivotTrajectory pivot1;
-    // private linearTrajectory linear2;
+    private linearTrajectory linear3;
     private pivotTrajectory pivot2;
     private pivotTrajectory pivot3;
     private limelightLineUp limeLight1;
@@ -26,16 +26,18 @@ public class Auto2 {
 
     private double startPosition;
 
+    private double startAngle;
+
     private autoRun autoState = autoRun.INIT;
 
     public Auto2(TorBalls torBalls, TorDrive torDrive) {
         this.torBalls = torBalls;
         this.torDrive = torDrive;
-        linear1 = new linearTrajectory(torDrive, -6.5, 1.75);
-        pivot1 = new pivotTrajectory(torDrive, -19.5, 1.25);
-        // linear2 = new linearTrajectory(torDrive, 5.5, 3.0);
-        pivot2 = new pivotTrajectory(torDrive, -167, 2.25);
-        pivot3 = new pivotTrajectory(torDrive, 168, 2.75);
+        linear1 = new linearTrajectory(torDrive, -6.5, 1.5);
+        pivot1 = new pivotTrajectory(torDrive, -21, 0.75);
+        linear3 = new linearTrajectory(torDrive, 3, 2.0);
+        // pivot2 = new pivotTrajectory(torDrive, -159, 3.0);
+        pivot3 = new pivotTrajectory(torDrive, 162, 2.75);
         limeLight1 = new limelightLineUp(torDrive, 0.1, 1.75);
     }
 
@@ -43,6 +45,7 @@ public class Auto2 {
         currentTime = Timer.getFPGATimestamp();
         switch(autoState) {
             case INIT:
+                startAngle = torDrive.getHeading();
                 linear1.init();
                 torBalls.autoRun(0);
                 autoState = autoRun.Linear1;
@@ -74,6 +77,7 @@ public class Auto2 {
             case Shoot:
                 torBalls.autoRun(2);
                 if(currentTime > startTime + 1.5) {
+                    pivot2 = new pivotTrajectory(torDrive, ((-Math.PI - (torDrive.getHeading() - startAngle)) * (180 / Math.PI)), 3.0);
                     pivot2.init();
                     autoState = autoRun.Pivot2;
                 }
@@ -88,31 +92,34 @@ public class Auto2 {
                 }
                 break;
             case Linear2:
-                if(torDrive.getPosition() - startPosition > 7.5) {
+                if(torDrive.getPosition() - startPosition > 8.0) {
                     torBalls.autoRun(0);
                     torDrive.setMotorSpeeds(0.1, 0.1);
                 } else {
                     torBalls.autoRun(3);
                     torDrive.setMotorSpeeds(0.3, 0.3);
                 }
-                if((torDrive.getPosition() > startPosition + 8.25)
+                if((torDrive.getPosition() > startPosition + 8.45)
                 || (startTime - currentTime > 7.0)) {
                     torDrive.setMotorSpeeds(0.0, 0.0);
                     torBalls.autoRun(0);
-                    Timer.delay(0.3);
-                    startTime = currentTime;
+                    Timer.delay(0.5);
                     pivot3.init();
                     autoState = autoRun.Pivot3;
                 }
                 break;
             case Pivot3:
-                if(currentTime - startTime > 0.75) {
-                    torBalls.autoRun(1);
-                } else {
-                    torBalls.autoRun(0);
-                }
+                torBalls.autoRun(0);
                 pivot3.run();
                 if(pivot3.isDone()) {
+                    linear3.init();
+                    autoState = autoRun.Linear3;
+                }
+                break;
+            case Linear3:
+                linear3.run();
+                torBalls.autoRun(0);
+                if(linear3.isDone()) {
                     limeLight1.init();
                     autoState = autoRun.limeLightLineUp2;
                 }
@@ -127,7 +134,7 @@ public class Auto2 {
                 break;
             case Shoot2:
                 torBalls.autoRun(2);
-                if(currentTime - startTime > 2.0) {
+                if(currentTime - startTime > 5.0) {
                     autoState = autoRun.DONE;
                 }
                 break;

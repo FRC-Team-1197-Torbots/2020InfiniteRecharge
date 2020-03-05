@@ -90,6 +90,15 @@ public class TorBalls {
             intake.runState(1);
             hopperMainMotor.set(ControlMode.PercentOutput, 0.0);
             hopperShooterMotor.set(0.0);
+            
+        } else if(state == 5) {//fire slowly
+            //rev up shooter
+            flywheel.run(true, true);
+            if(flywheel.isFastEnough()) {
+                intake.runState(2);
+                hopperMainMotor.set(ControlMode.PercentOutput, -0.7);
+            }
+            hopperShooterMotor.set(-0.95);
         } else {//idle
             //shooter off
             flywheel.run(true, false);

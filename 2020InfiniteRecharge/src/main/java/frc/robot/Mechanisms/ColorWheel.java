@@ -93,13 +93,12 @@ public class ColorWheel {
         controlPneumatic();
         
         //Display Data on Smart Dashboard
-        SmartDashboard.putNumber("Red", ColorInput.red);
-        SmartDashboard.putNumber("Green", ColorInput.green);
-        SmartDashboard.putNumber("Blue", ColorInput.blue);
-        SmartDashboard.putString("Color Detected", ColorDetected);
-        SmartDashboard.putNumber("Times Supn:", TimesSpun);
-        SmartDashboard.putString("Color", MatchColor);
-        SmartDashboard.putString("current state:", StateMachE.toString());
+        // SmartDashboard.putNumber("Red", ColorInput.red);
+        // SmartDashboard.putNumber("Green", ColorInput.green);
+        // SmartDashboard.putNumber("Blue", ColorInput.blue);
+        // SmartDashboard.putString("Color Detected", ColorDetected);
+        // SmartDashboard.putNumber("Times Supn:", TimesSpun);
+        // SmartDashboard.putString("current state:", StateMachE.toString());
     }
 
     public void getCurrentColor() {

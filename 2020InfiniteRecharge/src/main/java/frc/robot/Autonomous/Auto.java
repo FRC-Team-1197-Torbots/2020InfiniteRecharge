@@ -14,6 +14,7 @@ public class Auto {
     private Auto1 Auto1;
     private Auto2 Auto2;
     private Auto3 Auto3;
+    private Auto4 Auto4;
 
     private linearTrajectory linearRun;
     private pivotTrajectory pivotRun;
@@ -44,6 +45,7 @@ public class Auto {
         Auto1 = new Auto1(torBalls, torDrive);
         Auto2 = new Auto2(torBalls, torDrive);
         Auto3 = new Auto3(torBalls, torDrive);
+        Auto4 = new Auto4(torBalls, torDrive);
     }
 
     public void testRun() {
@@ -128,6 +130,8 @@ public class Auto {
             Auto2.run();
         } else if(autoToRun == 3) {
             Auto3.run();
+        } else if(autoToRun == 4) {
+            Auto4.run();
         }
     }
 }

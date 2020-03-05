@@ -6,47 +6,55 @@ import frc.robot.Drive.*;
 public class Auto3 {
     public static enum autoRun {
         INIT, Linear1, limeLightLineUp,
-        Shoot, Linear2, Pivot1, Linear3, Linear4,
-        Pivot2, Linear5, Linear6, Pivot3, Linear7,
+        Shoot, Linear2,
+        Pivot1, Linear3, Linear4,
+        // Pivot2, Linear5, Linear6, 
+        Pivot3,
         limeLightLineUp2, Shoot2, Done;
         private autoRun() {}
     }
     
     private TorBalls torBalls;
+    private TorDrive torDrive;
     private linearTrajectory linear1;
     private linearTrajectory linear2;
-    private linearTrajectory linear3;
+    // private linearTrajectory linear3;
     private linearTrajectory linear4;
-    private linearTrajectory linear5;
-    private linearTrajectory linear6;
-    private linearTrajectory linear7;
+    // private linearTrajectory linear5;
+    // private linearTrajectory linear6;
+    // private linearTrajectory linear7;
     private pivotTrajectory pivot1;
-    private pivotTrajectory pivot2;
+    // private pivotTrajectory pivot2;
     private pivotTrajectory pivot3;
     
     private limelightLineUp limeLight1;
     private double currentTime;
     private double startTime;
 
+    private double lastPosition;
+    private double currentPosition;
+
     private autoRun autoState = autoRun.INIT;
 
     public Auto3(TorBalls torBalls, TorDrive torDrive) {
         this.torBalls = torBalls;
-        linear1 = new linearTrajectory(torDrive, -4.5, 3.0);
-        linear2 = new linearTrajectory(torDrive, 1.5, 3.0);
-        pivot1 = new pivotTrajectory(torDrive, -170, 3.0);
-        linear3 = new linearTrajectory(torDrive, 2.0, 3.0);
-        linear4 = new linearTrajectory(torDrive, -2.0, 3.0);
-        pivot2 = new pivotTrajectory(torDrive, 30, 3.0);
-        linear5 = new linearTrajectory(torDrive, 2.5, 3.0);
-        linear6 = new linearTrajectory(torDrive, -2.5, 3.0);
-        pivot3 = new pivotTrajectory(torDrive, 110, 3.0);
-        linear7 = new linearTrajectory(torDrive, -1.5, 3.0);
-        limeLight1 = new limelightLineUp(torDrive, 0.25, 1.5);
+        this.torDrive = torDrive;
+        linear1 = new linearTrajectory(torDrive, -5.25, 3.0);
+        linear2 = new linearTrajectory(torDrive, 1.5, 1.5);
+        pivot1 = new pivotTrajectory(torDrive, 154, 3.0);
+        // linear3 = new linearTrajectory(torDrive, 2.25, 2.0);
+        linear4 = new linearTrajectory(torDrive, -2.0, 1.5);
+        // pivot2 = new pivotTrajectory(torDrive, 10, 3.0);
+        // linear5 = new linearTrajectory(torDrive, 2.5, 3.0);
+        // linear6 = new linearTrajectory(torDrive, -2.5, 3.0);
+        pivot3 = new pivotTrajectory(torDrive, -174, 1.5);
+        // linear7 = new linearTrajectory(torDrive, -1.5, 0.0);
+        limeLight1 = new limelightLineUp(torDrive, 0.15, 1.5);
     }
 
     public void run() {
         currentTime = Timer.getFPGATimestamp();
+        currentPosition = torDrive.getPosition();
         switch(autoState) {
             case INIT:
                 linear1.init();
@@ -71,7 +79,7 @@ public class Auto3 {
                 }
                 break;
             case Shoot:
-                torBalls.autoRun(2);
+                torBalls.autoRun(5);
                 if(currentTime > startTime + 2.0) {
                     linear2.init();
                     autoState = autoRun.Linear2;
@@ -89,14 +97,15 @@ public class Auto3 {
                 torBalls.autoRun(3);
                 pivot1.run();
                 if(pivot1.isDone()) {
-                    linear3.init();
+                    lastPosition = currentPosition;
                     autoState = autoRun.Linear3;
                 }
                 break;
             case Linear3:
                 torBalls.autoRun(3);
-                linear3.run();
-                if(linear3.isDone()) {
+                torDrive.setMotorSpeeds(0.1, 0.1);
+                if(currentPosition > lastPosition + 3.0) {
+                    torDrive.setMotorSpeeds(0.0, 0.0);
                     linear4.init();
                     autoState = autoRun.Linear4;
                 }
@@ -105,46 +114,14 @@ public class Auto3 {
                 torBalls.autoRun(0);
                 linear4.run();
                 if(linear4.isDone()) {
-                    pivot2.init();
-                    autoState = autoRun.Pivot2;
-                }
-                break;
-            case Pivot2:
-                torBalls.autoRun(3);
-                pivot2.run();
-                if(pivot2.isDone()) {
-                    linear5.init();
-                    autoState = autoRun.Linear5;
-                }
-                break;
-            case Linear5:
-                torBalls.autoRun(3);
-                linear5.run();
-                if(linear5.isDone()) {
-                    linear6.init();
-                    autoState = autoRun.Linear6;
-                }
-                break;
-            case Linear6:
-                torBalls.autoRun(0);
-                linear6.run();
-                if(linear6.isDone()) {
                     pivot3.init();
                     autoState = autoRun.Pivot3;
                 }
                 break;
             case Pivot3:
-                torBalls.autoRun(0);
+                torBalls.autoRun(1);
                 pivot3.run();
                 if(pivot3.isDone()) {
-                    linear7.init();
-                    autoState = autoRun.Linear7;
-                }
-                break;
-            case Linear7:
-                torBalls.autoRun(1);
-                linear7.run();
-                if(linear7.isDone()) {
                     limeLight1.init();
                     autoState = autoRun.limeLightLineUp2;
                 }
@@ -159,7 +136,7 @@ public class Auto3 {
                 break;
             case Shoot2:
                 torBalls.autoRun(2);
-                if(currentTime - startTime > 2.0) {
+                if(currentTime - startTime > 3.0) {
                     autoState = autoRun.Done;
                 }
                 break;

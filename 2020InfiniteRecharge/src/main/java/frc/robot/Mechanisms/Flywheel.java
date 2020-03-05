@@ -1,6 +1,8 @@
 package frc.robot.Mechanisms;
 
 import frc.robot.PID_Tools.*;
+
+// import com.revrobotics.AlternateEncoderType;
 // import com.ctre.phoenix.motorcontrol.ControlMode;
 // import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 // import com.ctre.phoenix.motorcontrol.IMotorController;
@@ -8,6 +10,7 @@ import frc.robot.PID_Tools.*;
 // import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
+// import com.revrobotics.EncoderType;
 // import com.revrobotics.EncoderType;
 // import com.revrobotics.SparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -17,13 +20,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Flywheel {
-    private final double targetHighSpeed = 11000;// rpm
+    private final double targetHighSpeed = 9200;// rpm
     private final double targetLowSpeed = 5500;//rpm
-    private final double highSpeedConstant = 0.85;
+    private final double highSpeedConstant = 0.9;
     private final double lowSpeedConstant = 0.0;
-    private final double adjustingConstant = -1.0 / 3;
-    private final double kP = 0.0002;//.0005
-    private final double kI = 0.00002;//.00075
+    // private final double adjustingConstant = 1.0 / 3;
+    private final double kP = 0.0002;//.0002
+    private final double kI = 0.000005;//.000002
     private final double kD = 0.0;
     private double currentError = 0;
 
@@ -35,8 +38,8 @@ public class Flywheel {
     private double targetSpeed;
     private double currentSpeed;
     private double speedToSetMotor;
-    private TorDerivative findCurrentSpeed;
-    private double currentPosition;
+    // private TorDerivative findCurrentSpeed;
+    // private double currentPosition;
     private final double gearRatio = 1;// ratio from encoder to flywheel
     private CANSparkMax flywheelMotor1;
     private CANSparkMax otherFlywheelMotor;
@@ -60,11 +63,11 @@ public class Flywheel {
         // this.flywheelEncoder2 = this.flywheelMotor2.getEncoder();
         flywheelMotor1 = new CANSparkMax(7, MotorType.kBrushless);
         otherFlywheelMotor = new CANSparkMax(8, MotorType.kBrushless);
-        flywheelEncoder1 = flywheelMotor1.getEncoder();
+        flywheelEncoder1 = otherFlywheelMotor.getEncoder();
 
         this.player2 = player2;
-        findCurrentSpeed = new TorDerivative(dt);
-        findCurrentSpeed.resetValue(0);
+        // findCurrentSpeed = new TorDerivative(dt);
+        // findCurrentSpeed.resetValue(0);
         pidDerivative = new TorDerivative(dt);
         pidDerivative.resetValue(0);
         
@@ -85,15 +88,15 @@ public class Flywheel {
             lastCountedTime = currentTime;
             if(player2.getRawButton(6) || forceOn) {
                 targetSpeed = targetHighSpeed;
-                currentPosition = (adjustingConstant * flywheelEncoder1.getPosition()) / (gearRatio);
+                // currentPosition = (adjustingConstant * flywheelEncoder1.getPosition()) / (gearRatio);
                 // currentPosition = (adjustingConstant * 1) / (gearRatio);
-                currentSpeed = findCurrentSpeed.estimate(currentPosition) * 60;//rpm
+                currentSpeed = -flywheelEncoder1.getVelocity() / gearRatio;//rpm
                 speedToSetMotor = pidRun(currentSpeed, targetSpeed) + highSpeedConstant;
             } else {   
                 targetSpeed = targetLowSpeed;
-                currentPosition = (adjustingConstant * flywheelEncoder1.getPosition()) / (gearRatio);
+                // currentPosition = (adjustingConstant * flywheelEncoder1.getPosition()) / (gearRatio);
                 // currentPosition = (adjustingConstant * 1) / (gearRatio);
-                currentSpeed = findCurrentSpeed.estimate(currentPosition) * 60;//rpm
+                currentSpeed = -flywheelEncoder1.getVelocity() / gearRatio;//rpm
                 speedToSetMotor = pidRun(currentSpeed, targetSpeed) + lowSpeedConstant;
                 speedToSetMotor = lowSpeedConstant;
             }
@@ -113,7 +116,7 @@ public class Flywheel {
                     otherFlywheelMotor.set(lowSpeedConstant * -1.0f);
                 }
             }
-           
+            
             SmartDashboard.putNumber("current Speed", currentSpeed);
         }
     }

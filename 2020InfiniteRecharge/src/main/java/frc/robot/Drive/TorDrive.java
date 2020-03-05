@@ -93,6 +93,7 @@ public class TorDrive {//this is the upper layer of the drive
 	public void init() {
 		ADC.init();
 		TDC.init();
+		hardware.init();
 	}
 	
 	//we are only running trajectories in MP so that is why it only takes from the MPDC

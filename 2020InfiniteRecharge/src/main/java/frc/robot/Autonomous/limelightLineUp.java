@@ -15,9 +15,11 @@ public class limelightLineUp {
 	private double currentTime;
 	private double minimalTime;
 	private final double kF = 0.005;
+
+	private final double maxSpeed = 0.75;
     
     //PID For rotation
-	private final double rkP = -1.7;//1
+	private final double rkP = -1.6;//1
 	private final double rkD = 0.0;//-0.009
 	private final double rkI = 0.05;//0.02
 	
@@ -122,6 +124,12 @@ public class limelightLineUp {
 			
 			speed = omegaP + omegaD + (omegaI * rkI * kF);
 			speed *= lor;
+
+			if(speed > maxSpeed) {
+				speed = maxSpeed;
+			} else if(speed < -maxSpeed) {
+				speed = -maxSpeed;
+			}
 			
 			drive.setMotorSpeeds(speed, -speed);
 				

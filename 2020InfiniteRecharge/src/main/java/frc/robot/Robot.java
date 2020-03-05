@@ -53,8 +53,8 @@ public class Robot extends TimedRobot {
   
   public Robot() {
     compressor = new Compressor();
-    adjustingPiston = new Solenoid(3);
-    colorwheelPiston = new Solenoid(4);
+    adjustingPiston = new Solenoid(4);
+    colorwheelPiston = new Solenoid(3);
 
     climbTalon1 = new TalonSRX(10);
     colorwheelTalon = new VictorSPX(13);
