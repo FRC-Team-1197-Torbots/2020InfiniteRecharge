@@ -2,7 +2,7 @@ package frc.robot.Autonomous;
 
 import frc.robot.Mechanisms.*;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Drive.*;
 
 public class Auto {
@@ -54,13 +54,13 @@ public class Auto {
         // SmartDashboard.putNumber("right encoder:", torDrive.getRightEncoder());
         // SmartDashboard.putNumber("current heading degrees:", (torDrive.getHeading() * 180 / Math.PI));
 
-        SmartDashboard.putString("state machine", testAutoStateMachine.toString());
-        SmartDashboard.putBoolean("linear is done", linearRun.isDone());
-        SmartDashboard.putBoolean("pivot is done", pivotRun.isDone());
+        // SmartDashboard.putString("state machine", testAutoStateMachine.toString());
+        // SmartDashboard.putBoolean("linear is done", linearRun.isDone());
+        // SmartDashboard.putBoolean("pivot is done", pivotRun.isDone());
         
-        SmartDashboard.putBoolean("linear 2 is done", linearRun2.isDone());
-        SmartDashboard.putBoolean("pivot 2 is done", pivotRun2.isDone());
-        SmartDashboard.putBoolean("limelight is done", limeLight.isDone());
+        // SmartDashboard.putBoolean("linear 2 is done", linearRun2.isDone());
+        // SmartDashboard.putBoolean("pivot 2 is done", pivotRun2.isDone());
+        // SmartDashboard.putBoolean("limelight is done", limeLight.isDone());
 
         torBalls.autoRun(0);
         if(testAutoStateMachine == testAuto.IDLE) {

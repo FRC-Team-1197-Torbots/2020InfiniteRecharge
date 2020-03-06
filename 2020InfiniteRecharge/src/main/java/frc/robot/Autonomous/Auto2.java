@@ -35,7 +35,7 @@ public class Auto2 {
         this.torDrive = torDrive;
         linear1 = new linearTrajectory(torDrive, -6.5, 1.5);
         pivot1 = new pivotTrajectory(torDrive, -21, 0.75);
-        linear3 = new linearTrajectory(torDrive, 3, 1.0);
+        linear3 = new linearTrajectory(torDrive, 6, 1.25);
         // pivot2 = new pivotTrajectory(torDrive, -159, 3.0);
         pivot3 = new pivotTrajectory(torDrive, 162, 2.0);
         limeLight1 = new limelightLineUp(torDrive, 0.1, 1.75);
@@ -76,7 +76,7 @@ public class Auto2 {
                 break;
             case Shoot:
                 torBalls.autoRun(2);
-                if(currentTime > startTime + 1.4) {
+                if(currentTime > startTime + 1.65) {
                     pivot2 = new pivotTrajectory(torDrive, 
                     ((-Math.PI - (torDrive.getHeading() - startAngle)) * (180 / Math.PI)), 2.0);
                     pivot2.init();

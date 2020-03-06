@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Encoder;
 
 public class DriveHardware {
@@ -87,15 +87,15 @@ public class DriveHardware {
 	}
 
 	public void setMotorSpeeds(double leftSpeed, double rightSpeed) {
-		SmartDashboard.putNumber("left raw", getLeftEncoder());
-		SmartDashboard.putNumber("right raw", getRightEncoder());
+		// SmartDashboard.putNumber("left raw", getLeftEncoder());
+		// SmartDashboard.putNumber("right raw", getRightEncoder());
 		SetLeft(leftSpeed);
 		SetRight(rightSpeed);
 	}
 
 	// Setting the left master Talon's speed to the given parameter
 	public void SetLeft(double speed) {
-		SmartDashboard.putNumber("set left:", speed);
+		// SmartDashboard.putNumber("set left:", speed);
 		leftMaster.set(speed);
 		// leftSlave1.set(speed);
 		// leftSlave2.set(speed);
@@ -106,7 +106,7 @@ public class DriveHardware {
 
 	// Setting the right master Talon's speed to the given parameter
 	public void SetRight(double speed) {
-		SmartDashboard.putNumber("set right:", speed);
+		// SmartDashboard.putNumber("set right:", speed);
 		rightMaster.set(speed);
 		// rightSlave1.set(speed);
 		// rightSlave2.set(speed);

@@ -17,7 +17,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Flywheel {
     private final double targetHighSpeed = 9200;// rpm
@@ -117,7 +117,7 @@ public class Flywheel {
                 }
             }
             
-            SmartDashboard.putNumber("current Speed", currentSpeed);
+            // SmartDashboard.putNumber("current Speed", currentSpeed);
         }
     }
     
@@ -129,7 +129,7 @@ public class Flywheel {
         
         currentError = targetSpeed - currentSpeed;
         
-        SmartDashboard.putNumber("currentError:", currentError);
+        // SmartDashboard.putNumber("currentError:", currentError);
         pidDerivativeResult = pidDerivative.estimate(currentError);
         pidIntegral += currentError;
 

@@ -5,7 +5,7 @@ import frc.robot.Drive.*;
 
 public class Auto3 {
     public static enum autoRun {
-        INIT, Linear1, limeLightLineUp,
+        INIT, Linear1, PivotA, limeLightLineUp,
         Shoot, Linear2,
         Pivot1, Linear3, Linear4,
         // Pivot2, Linear5, Linear6, 
@@ -24,10 +24,11 @@ public class Auto3 {
     // private linearTrajectory linear6;
     // private linearTrajectory linear7;
     private pivotTrajectory pivot1;
+    private pivotTrajectory pivotA;
     // private pivotTrajectory pivot2;
     private pivotTrajectory pivot3;
     
-    private limelightLineUp limeLight1;
+    private limelightLineUp2 limeLight1;
     private double currentTime;
     private double startTime;
 
@@ -41,15 +42,16 @@ public class Auto3 {
         this.torDrive = torDrive;
         linear1 = new linearTrajectory(torDrive, -5.25, 3.0);
         linear2 = new linearTrajectory(torDrive, 1.5, 1.5);
-        pivot1 = new pivotTrajectory(torDrive, 154, 3.0);
+        pivot1 = new pivotTrajectory(torDrive, 172, 3.0);
+        pivotA = new pivotTrajectory(torDrive, 15, 0.75);
         // linear3 = new linearTrajectory(torDrive, 2.25, 2.0);
         linear4 = new linearTrajectory(torDrive, -2.0, 1.5);
         // pivot2 = new pivotTrajectory(torDrive, 10, 3.0);
         // linear5 = new linearTrajectory(torDrive, 2.5, 3.0);
         // linear6 = new linearTrajectory(torDrive, -2.5, 3.0);
-        pivot3 = new pivotTrajectory(torDrive, -174, 1.5);
+        pivot3 = new pivotTrajectory(torDrive, -164, 1.5);
         // linear7 = new linearTrajectory(torDrive, -1.5, 0.0);
-        limeLight1 = new limelightLineUp(torDrive, 0.15, 1.5);
+        limeLight1 = new limelightLineUp2(torDrive, 0.15, 1.5);
     }
 
     public void run() {
@@ -66,6 +68,14 @@ public class Auto3 {
                 linear1.run();
                 torBalls.autoRun(0);
                 if(linear1.isDone()) {
+                    pivotA.init();
+                    autoState = autoRun.PivotA;
+                }
+                break;
+            case PivotA:
+                pivotA.run();
+                torBalls.autoRun(1);
+                if(pivotA.isDone()) {
                     limeLight1.init();
                     autoState = autoRun.limeLightLineUp;
                 }

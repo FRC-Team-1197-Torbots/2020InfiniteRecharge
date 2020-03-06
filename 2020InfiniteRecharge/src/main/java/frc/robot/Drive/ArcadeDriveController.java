@@ -7,7 +7,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ArcadeDriveController extends DriveController {
 
@@ -142,16 +142,16 @@ public class ArcadeDriveController extends DriveController {
                arcadeSteerAxis *= 0.25;
            }
            // get all the values from the limelight
-           SmartDashboard.putNumber("tx:", tx.getDouble(0.0) - 1.5);
+        //    SmartDashboard.putNumber("tx:", tx.getDouble(0.0) - 1.5);
            x = tx.getDouble(0.0) - 1.5;
            area = ta.getDouble(0.0);
 
            // convert tShe angles into radians
            x *= ((Math.PI) / 180.0);
-           SmartDashboard.putNumber("x:", x);
+        //    SmartDashboard.putNumber("x:", x);
            distance = areaAt1Meter / area;
 
-           SmartDashboard.putNumber("distance limelight", distance);
+        //    SmartDashboard.putNumber("distance limelight", distance);
            if(player1.getRawButton(1)) {
                 NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);//top
                 currentVelocity = findCurrentVelocity.estimate(x);
@@ -159,7 +159,7 @@ public class ArcadeDriveController extends DriveController {
                 limeLightPID.updateTargets(0 * (Math.PI / 180.0), targetVelocity, targetAcceleration);
                 limeLightPID.updateCurrentValues(x, currentVelocity);
                 speedChange = limeLightPID.update();
-                SmartDashboard.putNumber("speedChanged right now:", speedChange);
+                // SmartDashboard.putNumber("speedChanged right now:", speedChange);
                 arcadeSteerAxis += speedChange;
            } else {
                NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
@@ -203,10 +203,10 @@ public class ArcadeDriveController extends DriveController {
            }           
 
            //for color wheel DIO
-           if(!colorWheelDIO.get() && !player1.getRawButton(3)) {
-               rightMotorSpeed = 0;
-               leftMotorSpeed = 0;
-           }
+        //    if(!player1.getRawButton(3)) {
+        //        rightMotorSpeed = 0;
+        //        leftMotorSpeed = 0;
+        //    }
            
            setRightOutput(rightMotorSpeed);
            setLeftOutput(leftMotorSpeed);

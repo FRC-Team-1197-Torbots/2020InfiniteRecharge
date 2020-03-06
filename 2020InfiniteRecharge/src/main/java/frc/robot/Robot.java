@@ -16,7 +16,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Drive.*;
 import frc.robot.Mechanisms.*;
@@ -86,7 +86,15 @@ public class Robot extends TimedRobot {
   public void robotInit() { 
     compressor.start();
     hardware.init();
+    
+    //camera code
+    // UsbCamera intakeCam = CameraServer.getInstance().startAutomaticCapture(0);
+		// // intakeCam.setBrightness(50);
+		// CvSink cvsink1 = new CvSink("Intake and hopper Cam");
+		// cvsink1.setSource(intakeCam);
+    // cvsink1.setEnabled(true);
 
+    CameraServer.getInstance().startAutomaticCapture();
   }
   
   @Override
@@ -116,13 +124,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    //camera code
-    UsbCamera intakeCam = CameraServer.getInstance().startAutomaticCapture(0);
-		// intakeCam.setBrightness(50);
-		CvSink cvsink1 = new CvSink("Intake and hopper Cam");
-		cvsink1.setSource(intakeCam);
-    cvsink1.setEnabled(true);
-    
 
     climber.run();
     // Auto.testRun();
@@ -132,10 +133,10 @@ public class Robot extends TimedRobot {
     colorwheel.Main();
     compressor.start();
     
-    SmartDashboard.putNumber("current position:", drive.getPosition());
-    SmartDashboard.putNumber("left encoder:", drive.getLeftEncoder());
-    SmartDashboard.putNumber("right encoder:", drive.getRightEncoder());
-    SmartDashboard.putNumber("current heading degrees:", (drive.getHeading() * 180 / Math.PI));
+    // SmartDashboard.putNumber("current position:", drive.getPosition());
+    // SmartDashboard.putNumber("left encoder:", drive.getLeftEncoder());
+    // SmartDashboard.putNumber("right encoder:", drive.getRightEncoder());
+    // SmartDashboard.putNumber("current heading degrees:", (drive.getHeading() * 180 / Math.PI));
   }
   
   @Override

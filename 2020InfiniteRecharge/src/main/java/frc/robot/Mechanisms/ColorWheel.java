@@ -7,7 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ColorWheel {
     private int TimesSpun = 0;
@@ -63,7 +63,7 @@ public class ColorWheel {
         currentTime = (long) (1000 * Timer.getFPGATimestamp());
         ColorInput = m_colorSensor.getColor();
         ProximityInput = m_colorSensor.getProximity();
-        SmartDashboard.putNumber("proimity input", ProximityInput);
+        // SmartDashboard.putNumber("proimity input", ProximityInput);
         ColorDetected = "None";
         getCurrentColor();
 
