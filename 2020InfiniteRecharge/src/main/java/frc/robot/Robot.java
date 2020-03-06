@@ -1,5 +1,8 @@
 package frc.robot;
 
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -113,6 +116,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    //camera code
+    UsbCamera intakeCam = CameraServer.getInstance().startAutomaticCapture(0);
+		// intakeCam.setBrightness(50);
+		CvSink cvsink1 = new CvSink("Intake and hopper Cam");
+		cvsink1.setSource(intakeCam);
+    cvsink1.setEnabled(true);
+    
+
     climber.run();
     // Auto.testRun();
     drive.Run(test, true);
