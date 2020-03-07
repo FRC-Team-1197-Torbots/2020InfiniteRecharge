@@ -22,10 +22,10 @@ import edu.wpi.first.wpilibj.Timer;
 public class Flywheel {
     private final double targetHighSpeed = 9200;// rpm 9200
     private final double targetLowSpeed = 5500;//rpm
-    private final double highSpeedConstant = 0.9;//0.9
+    private final double highSpeedConstant = 0.94;//0.9
     private final double lowSpeedConstant = 0.0;
     // private final double adjustingConstant = 1.0 / 3;
-    private final double kP = 0.00035;//.00035
+    private final double kP = 0.00045;//.00035
     private final double kI = 0.000005;//.000005
     private final double kD = 0.0;
     private double currentError = 0;
@@ -122,7 +122,7 @@ public class Flywheel {
     }
     
     public boolean isFastEnough() {
-        return currentSpeed > 0.9 * targetHighSpeed;
+        return currentSpeed > 0.95 * targetHighSpeed;
     }
 
     public double pidRun(double currentSpeed, double targetSpeed) {

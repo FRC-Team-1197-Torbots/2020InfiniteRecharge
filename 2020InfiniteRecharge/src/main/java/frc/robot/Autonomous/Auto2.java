@@ -98,7 +98,7 @@ public class Auto2 {
                     torDrive.setMotorSpeeds(0.1, 0.1);
                 } else {
                     torBalls.autoRun(3);
-                    torDrive.setMotorSpeeds(0.3, 0.3);
+                    torDrive.setMotorSpeeds(0.25, 0.25);
                 }
                 if((torDrive.getPosition() > startPosition + 8.45)
                 || (startTime - currentTime > 7.0)) {

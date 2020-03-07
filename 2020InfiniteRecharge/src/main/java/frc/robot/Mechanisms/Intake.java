@@ -27,10 +27,12 @@ public class Intake {
             intakeMotor.set(ControlMode.PercentOutput, 0);
             intakePiston.set(true);
 
+        } else if(state == 4) {
+            intakeMotor.set(ControlMode.PercentOutput, 0.75);
+            intakePiston.set(true);
         } else {
             intakeMotor.set(ControlMode.PercentOutput, 0);
             intakePiston.set(false);
-
         }
     }
 }

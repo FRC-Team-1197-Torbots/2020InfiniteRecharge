@@ -140,6 +140,9 @@ public class ArcadeDriveController extends DriveController {
            if(player1.getRawButton(2)) {
                throttleAxis *= 0.25;
                arcadeSteerAxis *= 0.25;
+           } else if(player1.getRawButton(3)) {
+            throttleAxis *= 0.125;
+            arcadeSteerAxis *= 0.125;
            }
            // get all the values from the limelight
         //    SmartDashboard.putNumber("tx:", tx.getDouble(0.0) - 1.5);

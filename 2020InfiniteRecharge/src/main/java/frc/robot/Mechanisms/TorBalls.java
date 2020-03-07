@@ -47,7 +47,7 @@ public class TorBalls {
                 hopperMainMotor.set(ControlMode.PercentOutput, -0.5);
             } else {
                 if(Math.abs(player2.getRawAxis(2)) > 0.3) {
-                    intake.runState(1);
+                    intake.runState(4);
                 } else {
                     if(player2.getRawButton(7)) {
                         intake.runState(3);
