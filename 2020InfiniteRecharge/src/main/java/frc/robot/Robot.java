@@ -6,6 +6,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpiutil.net.PortForwarder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.I2C;
@@ -93,8 +94,11 @@ public class Robot extends TimedRobot {
 		// CvSink cvsink1 = new CvSink("Intake and hopper Cam");
 		// cvsink1.setSource(intakeCam);
     // cvsink1.setEnabled(true);
+    // CameraServer.getInstance().startAutomaticCapture();
 
-    CameraServer.getInstance().startAutomaticCapture();
+    PortForwarder.add(5800, "limelight.local", 5800);
+    PortForwarder.add(5801, "limelight.local", 5801);
+    PortForwarder.add(5805, "limelight.local", 5805);
   }
   
   @Override
