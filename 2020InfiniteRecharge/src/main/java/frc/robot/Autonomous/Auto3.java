@@ -89,7 +89,7 @@ public class Auto3 {
                 }
                 break;
             case Shoot:
-                torBalls.autoRun(5);
+                torBalls.autoRun(2);
                 if(currentTime > startTime + 1.75) {
                     linear2.init();
                     autoState = autoRun.Linear2;

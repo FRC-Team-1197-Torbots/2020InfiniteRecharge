@@ -41,7 +41,8 @@ public class TorBalls {
             } else {
                 hopperShooterMotor.set(0.0);
             }
-            if((Math.abs(player2.getRawAxis(3)) > 0.3) && flywheel.isFastEnough()) {//right trigger go
+            if((Math.abs(player2.getRawAxis(3)) > 0.3)
+            && flywheel.isFastEnough()) {//right trigger go
                 intake.runState(2);
                 hopperMainMotor.set(ControlMode.PercentOutput, -0.5);
             } else {

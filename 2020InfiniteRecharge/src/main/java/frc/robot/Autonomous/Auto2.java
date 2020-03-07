@@ -37,7 +37,7 @@ public class Auto2 {
         pivot1 = new pivotTrajectory(torDrive, -21, 0.75);
         linear3 = new linearTrajectory(torDrive, 6, 1.25);
         // pivot2 = new pivotTrajectory(torDrive, -159, 3.0);
-        pivot3 = new pivotTrajectory(torDrive, 162, 2.0);
+        pivot3 = new pivotTrajectory(torDrive, 162, 1.5);
         limeLight1 = new limelightLineUp(torDrive, 0.1, 1.75);
     }
 
