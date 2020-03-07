@@ -18,7 +18,7 @@ public class Intake {
         //1 is intaking
         //2 is intake motor on but retracted (for shooting)
         if(state == 1) {
-            intakeMotor.set(ControlMode.PercentOutput, 0.8);
+            intakeMotor.set(ControlMode.PercentOutput, 0.75);
             intakePiston.set(true);
         } else if(state == 2) {
             intakeMotor.set(ControlMode.PercentOutput, 0.3);
