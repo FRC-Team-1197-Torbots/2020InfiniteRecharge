@@ -30,7 +30,7 @@ public class Schwingster {
         if(player2.getRawButton(4)) {
             climbTalon1.set(ControlMode.PercentOutput, 0.8);
         } else if(player2.getRawButton(3)) {
-            climbTalon1.set(ControlMode.PercentOutput, -0.8);
+            climbTalon1.set(ControlMode.PercentOutput, -0.9);
         } else {
             climbTalon1.set(ControlMode.PercentOutput, 0);
         }

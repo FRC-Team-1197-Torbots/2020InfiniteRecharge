@@ -1,21 +1,21 @@
 package frc.robot;
 
-import edu.wpi.cscore.CvSink;
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.cameraserver.CameraServer;
+// import edu.wpi.cscore.CvSink;
+// import edu.wpi.cscore.UsbCamera;
+// import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DriverStation;
+// import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpiutil.net.PortForwarder;
+// import edu.wpi.first.wpiutil.net.PortForwarder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.I2C;
+// import edu.wpi.first.wpilibj.I2C;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
+// import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ColorSensorV3;
+// import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -33,16 +33,16 @@ public class Robot extends TimedRobot {
   private Solenoid intakePiston;
   private final Compressor compressor;
    private TalonSRX climbTalon1;
-  private VictorSPX colorwheelTalon;
+  // private VictorSPX colorwheelTalon;
   private Solenoid adjustingPiston;
-  private Solenoid colorwheelPiston;
+  // private Solenoid colorwheelPiston;
   private Schwingster climber;
   
   // private Drive drivecontrol;
-  private ColorWheel colorwheel;
+  // private ColorWheel colorwheel;
   
-  private final I2C.Port i2cPort = I2C.Port.kOnboard;
-  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
+  // private final I2C.Port i2cPort = I2C.Port.kOnboard;
+  // private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
   private DriveHardware hardware;
 	private TorDrive drive;
@@ -51,17 +51,17 @@ public class Robot extends TimedRobot {
   private Joystick autoBox;
 
   public boolean test;
-  private String gameData;
+  // private String gameData;
 
   private double autoNumber;
   
   public Robot() {
     compressor = new Compressor();
     adjustingPiston = new Solenoid(4);
-    colorwheelPiston = new Solenoid(3);
+    // colorwheelPiston = new Solenoid(3);
 
     climbTalon1 = new TalonSRX(10);
-    colorwheelTalon = new VictorSPX(13);
+    // colorwheelTalon = new VictorSPX(13);
       
     hardware = new DriveHardware();																																																																																																					
     player1 = new Joystick(0);
@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
 
     torBalls = new TorBalls(player2, hopperMainMotor, hopperShooterMotor, intakeMotor, intakePiston);
     climber = new Schwingster(player2, climbTalon1, adjustingPiston);
-    colorwheel = new ColorWheel(colorwheelTalon, m_colorSensor, player2, colorwheelPiston);
+    // colorwheel = new ColorWheel(colorwheelTalon, m_colorSensor, player2, colorwheelPiston);
 
     Auto = new Auto(torBalls, drive, player1);
   }
@@ -96,9 +96,9 @@ public class Robot extends TimedRobot {
     // cvsink1.setEnabled(true);
     // CameraServer.getInstance().startAutomaticCapture();
 
-    PortForwarder.add(5800, "limelight.local", 5800);
-    PortForwarder.add(5801, "limelight.local", 5801);
-    PortForwarder.add(5805, "limelight.local", 5805);
+    // PortForwarder.add(5800, "limelight.local", 5800);
+    // PortForwarder.add(5801, "limelight.local", 5801);
+    // PortForwarder.add(5805, "limelight.local", 5805);
   }
   
   @Override
@@ -114,7 +114,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     //1 = blue, 2 = green, 3 = red, 4 = yellow
-    colorWheelRun();
+    // colorWheelRun();
     torBalls.init();
     super.teleopInit();
   }
@@ -132,9 +132,9 @@ public class Robot extends TimedRobot {
     climber.run();
     // Auto.testRun();
     drive.Run(test, true);
-    colorWheelRun();
+    // colorWheelRun();
     torBalls.run(true, true);
-    colorwheel.Main();
+    // colorwheel.Main();
     compressor.start();
     
     // SmartDashboard.putNumber("current position:", drive.getPosition());
@@ -149,34 +149,34 @@ public class Robot extends TimedRobot {
     // drive.Run(test, true);
   }
 
-  public void colorWheelRun() {
-    gameData = DriverStation.getInstance().getGameSpecificMessage();
-    //we have to add 2 to the number since we have to spin to the opposite color
-    //since the colorwheel is sense from the middle
-    if(gameData.length() > 0) {
-      switch (gameData.charAt(0)) {
-        case 'B' :
-          // colorwheel.setColor(1);
-          colorwheel.setColor(3);
-          break;
-        case 'G' :
-          // colorwheel.setColor(2);
-          colorwheel.setColor(4);
-          break;
-        case 'R' :
-          // colorwheel.setColor(3);
-          colorwheel.setColor(1);
-          break;
-        case 'Y' :
-          // colorwheel.setColor(4);
-          colorwheel.setColor(2);
-          break;
-        default :
-          //This is corrupt data
-          break;
-      }
-    }
-  }
+  // public void colorWheelRun() {
+  //   gameData = DriverStation.getInstance().getGameSpecificMessage();
+  //   //we have to add 2 to the number since we have to spin to the opposite color
+  //   //since the colorwheel is sense from the middle
+  //   if(gameData.length() > 0) {
+  //     switch (gameData.charAt(0)) {
+  //       case 'B' :
+  //         // colorwheel.setColor(1);
+  //         colorwheel.setColor(3);
+  //         break;
+  //       case 'G' :
+  //         // colorwheel.setColor(2);
+  //         colorwheel.setColor(4);
+  //         break;
+  //       case 'R' :
+  //         // colorwheel.setColor(3);
+  //         colorwheel.setColor(1);
+  //         break;
+  //       case 'Y' :
+  //         // colorwheel.setColor(4);
+  //         colorwheel.setColor(2);
+  //         break;
+  //       default :
+  //         //This is corrupt data
+  //         break;
+  //     }
+  //   }
+  // }
 
   //Fetch Buttons
   public boolean getButtonA(){ return player1.getRawButton(1); }

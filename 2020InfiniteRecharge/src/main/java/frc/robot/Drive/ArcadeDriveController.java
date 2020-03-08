@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class ArcadeDriveController extends DriveController {
 
-   private DigitalInput colorWheelDIO;
+//    private DigitalInput colorWheelDIO;
    private double throttleAxis;
    private double arcadeSteerAxis;
    private double leftOutput;
@@ -88,7 +88,7 @@ public class ArcadeDriveController extends DriveController {
    public ArcadeDriveController(DriveHardware hardware, Joystick player1) {
        super(hardware, player1);
        this.player1 = player1;
-       colorWheelDIO = new DigitalInput(0);
+    //    colorWheelDIO = new DigitalInput(0);
 
        // this is the PID
        limeLightPID = new BantorPID(kV, kA, positionkP, positionkI, positionkD, velocitykP, velocitykI, velocitykD, dt,
@@ -147,16 +147,16 @@ public class ArcadeDriveController extends DriveController {
            // get all the values from the limelight
         //    SmartDashboard.putNumber("tx:", tx.getDouble(0.0) - 1.5);
            x = tx.getDouble(0.0) - 1.5;
-           area = ta.getDouble(0.0);
+        //    area = ta.getDouble(0.0);
 
            // convert tShe angles into radians
            x *= ((Math.PI) / 180.0);
         //    SmartDashboard.putNumber("x:", x);
-           distance = areaAt1Meter / area;
+        //    distance = areaAt1Meter / area;
 
         //    SmartDashboard.putNumber("distance limelight", distance);
            if(player1.getRawButton(1)) {
-                NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);//top
+                NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);//light up
                 currentVelocity = findCurrentVelocity.estimate(x);
 
                 limeLightPID.updateTargets(0 * (Math.PI / 180.0), targetVelocity, targetAcceleration);
@@ -185,7 +185,7 @@ public class ArcadeDriveController extends DriveController {
                arcadeArray[c] = arcadeArray[c - 1];
            }
            arcadeArray[0] = arcadeSteerAxis;
-           arcadeSteerAxis *= 0.5;
+           arcadeSteerAxis *= 0.5;//we have to slow down
 
            if (throttleAxis > 0.0D) {
                if (arcadeSteerAxis > 0.0D) {
